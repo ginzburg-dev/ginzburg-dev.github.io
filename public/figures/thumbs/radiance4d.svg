@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">
+  <rect width="320" height="240" fill="#ffffff"/>
+  <rect x="0.75" y="0.75" width="318.5" height="238.5" fill="none" stroke="#e6e9ee" stroke-width="1.5"/>
+
+  <text x="20" y="34" font-size="15" fill="#5b6472">Engine architecture</text>
+
+  <g fill="none" stroke="#5b6472" stroke-width="1.5">
+    <rect x="20" y="54" width="280" height="34"/>
+    <rect x="20" y="98" width="88" height="34"/>
+    <rect x="116" y="98" width="88" height="34"/>
+    <rect x="212" y="98" width="88" height="34"/>
+    <rect x="20" y="142" width="280" height="34"/>
+    <rect x="20" y="186" width="280" height="34"/>
+  </g>
+
+  <g fill="#1f2430" text-anchor="middle" font-size="14">
+    <text x="160" y="76">Render graph</text>
+    <text x="64" y="120">Raster</text>
+    <text x="160" y="120">Rays</text>
+    <text x="256" y="120">Splats</text>
+    <text x="160" y="164">Reconstruction</text>
+    <text x="160" y="208">Direct3D 12</text>
+  </g>
+</svg>

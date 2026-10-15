@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">
+  <rect width="320" height="240" fill="#ffffff"/>
+  <rect x="0.75" y="0.75" width="318.5" height="238.5" fill="none" stroke="#e6e9ee" stroke-width="1.5"/>
+  <defs>
+    <marker id="n-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#5b6472"/>
+    </marker>
+  </defs>
+
+  <text x="20" y="34" font-size="15" fill="#5b6472">Temporal window</text>
+
+  <!-- stacked noisy frames -->
+  <rect x="34" y="68" width="54" height="44" fill="#ffffff" stroke="#c6ccd6" stroke-width="1.5"/>
+  <rect x="27" y="80" width="54" height="44" fill="#ffffff" stroke="#c6ccd6" stroke-width="1.5"/>
+  <rect x="20" y="92" width="54" height="44" fill="#eef1f6" stroke="#5b6472" stroke-width="1.5"/>
+  <text x="47" y="162" font-size="13" fill="#5b6472" text-anchor="middle">noisy</text>
+
+  <path d="M 92 114 L 116 114" stroke="#5b6472" stroke-width="1.5" marker-end="url(#n-a)"/>
+
+  <!-- STeR core as a black box -->
+  <rect x="122" y="80" width="90" height="68" fill="#ffffff" stroke="#0f4c81" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="167" y="112" font-size="18" fill="#0f4c81" text-anchor="middle">STeR</text>
+  <text x="167" y="132" font-size="12" fill="#5b6472" text-anchor="middle">core</text>
+
+  <path d="M 218 114 L 242 114" stroke="#5b6472" stroke-width="1.5" marker-end="url(#n-a)"/>
+
+  <!-- stable output -->
+  <rect x="248" y="92" width="54" height="44" fill="#0f4c81" opacity="0.12"/>
+  <rect x="248" y="92" width="54" height="44" fill="none" stroke="#0f4c81" stroke-width="1.5"/>
+  <text x="275" y="162" font-size="13" fill="#5b6472" text-anchor="middle">stable</text>
+
+  <text x="20" y="208" font-size="13" fill="#5b6472">PyTorch training</text>
+  <text x="20" y="226" font-size="13" fill="#5b6472">C++/CUDA runtime</text>
+</svg>

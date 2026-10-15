@@ -1,0 +1,224 @@
+---
+title: "Ginzburg Neural Denoiser"
+summary: "A learned temporal denoiser for Monte Carlo rendered sequences, with the dataset, training pipeline, evaluation harness and a standalone C++/CUDA inference engine built around it."
+description: "STeR: a learned temporal restoration method for rendered sequences, with a paired temporal dataset, PyTorch training and evaluation, public baselines, and a standalone C++/CUDA inference runtime."
+role: "Sole author"
+years: "2024 – present"
+status: "research"
+areas: ["Machine Learning & Inference"]
+stack:
+  - "PyTorch"
+  - "C++"
+  - "CUDA"
+  - "cuDNN / cuBLAS"
+  - "Ray"
+  - "Triton"
+  - "OpenEXR"
+repo: "https://github.com/ginzburg-dev/ginzburg-neural-denoiser"
+featured: true
+order: 1
+---
+
+import PlateFigure from "../../components/PlateFigure.astro";
+import MetricTable from "../../components/MetricTable.astro";
+import Figure from "../../components/Figure.astro";
+import lion from "../../assets/projects/gnd-noise-to-clean.jpg";
+import flickerHeader from "../../assets/projects/gnd-flicker-header.png";
+import flickerHair from "../../assets/projects/gnd-flicker-hair.png";
+import flickerFace from "../../assets/projects/gnd-flicker-face.png";
+import flickerNeck from "../../assets/projects/gnd-flicker-neck.png";
+
+<div class="breakout">
+  <Figure
+    src={lion}
+    alt="Close-up of a furred animal head split down the middle: noisy low-sample render on the left, denoised result on the right."
+    caption="A low-sample render and the denoised result."
+    credit="Image by Joanna Kobierska."
+  />
+</div>
+
+## The problem is motion, not the single frame
+
+Path tracing estimates illumination from randomly sampled light paths. A smaller
+sampling budget renders faster but leaves stochastic error in the image, and
+that error resists naive filtering because sampling noise and fine scene detail
+occupy the same high-frequency range. Filter too hard and the detail goes with
+the noise.
+
+Strong single-frame denoisers already exist. On a still frame Intel OIDN and
+NVIDIA OptiX look excellent. The trouble starts when the sequence moves. A
+denoiser that reconstructs each frame independently cannot enforce consistency
+between frames, so residual noise and reconstruction error shift frame to frame.
+A clip that looks clean when paused **boils and flickers** in playback.
+
+STeR targets that directly: offline, high-quality denoising that stays stable
+across a whole sequence, with no per-shot tuning at inference.
+
+## STeR: Stable Temporal Restoration
+
+STeR reconstructs the centre frame from a short temporal window, deciding per
+pixel how much to trust each neighbouring frame and fusing them accordingly. It
+can optionally take auxiliary render features such as albedo, normals and depth as
+guidance where they exist. The noise level is estimated from the input, so an
+artist sets no denoising strength and no temporal thresholds per shot.
+
+<div class="breakout">
+  <PlateFigure
+    src="/figures/ster-pipeline.svg"
+    width={1250}
+    height={220}
+    alt="Pipeline diagram: a noisy three-frame window feeds noise estimation, motion compensation and feature extraction, then a STeR core performs temporal fusion and refinement, producing a clean, stable centre frame."
+    caption="The inference pipeline, stage by stage: noise estimation, motion compensation and feature extraction feed the STeR core, which fuses and refines the window into a stable centre frame."
+  />
+</div>
+
+## Results
+
+Each strip below plays nine consecutive frames of one shot, cropped on a hard
+region and following the character. The frames are not aligned, so the movement
+you see is what the denoiser produced. Watch the flat areas.
+
+<div class="breakout">
+  <Figure
+    src={flickerHeader}
+    alt="Three panels of the same mouth and chin crop: noisy input, Intel OIDN, and STeR, with flicker scores above each."
+    caption="Noisy input, Intel OIDN and STeR on the same crop, with the flicker score above each panel."
+  />
+</div>
+
+<div class="breakout">
+  <Figure
+    src={flickerHair}
+    alt="Five panels of a hair crop across consecutive frames: noisy, Intel OIDN, NVIDIA OptiX, STeR and the clean reference."
+    caption="Hair. Intel OIDN and NVIDIA OptiX shimmer between frames; STeR holds still."
+  />
+</div>
+
+<div class="breakout">
+  <Figure
+    src={flickerFace}
+    alt="Five panels of a close crop on the shadow side of a face across consecutive frames."
+    caption="The shadow side of the face is large, flat and low-contrast, which is where low-frequency pulsing shows most."
+  />
+</div>
+
+<div class="breakout">
+  <Figure
+    src={flickerNeck}
+    alt="Five panels of a neck and collar crop across consecutive frames."
+    caption="Neck and collar, where a hard edge meets a flat region."
+  />
+</div>
+
+The numbers below come from one controlled sequence. They are reported in full,
+including where STeR loses.
+
+<div class="breakout">
+  <MetricTable
+    title="Temporal stability"
+    note="Single 36-frame shot measured against its clean render. This is one sequence, not a multi-sequence average. STeR reads only the noisy colour pass; Intel OIDN and NVIDIA OptiX also receive the albedo and normal passes. Higher temporal PSNR is better; lower is better for every other column."
+    columns={[
+      { label: "Method" },
+      { label: "Temporal PSNR ↑", numeric: true },
+      { label: "Temporal MAE % ↓", numeric: true },
+      { label: "Temporal chroma % ↓", numeric: true },
+      { label: "Flicker LF-p95 % ↓", numeric: true },
+    ]}
+    rows={[
+      { cells: ["STeR (ours)", "43.78", "0.56", "0.39", "0.045"], own: true },
+      { cells: ["NVIDIA OptiX", "43.75", "0.62", "0.42", "0.060"] },
+      { cells: ["NAFNet Temporal + AOV", "42.43", "0.66", "0.53", "0.053"] },
+      { cells: ["Intel OIDN", "42.33", "0.75", "0.54", "0.054"] },
+      { cells: ["Noisy input", "36.95", "1.42", "1.07", "0.054"] },
+    ]}
+  />
+</div>
+
+On this sequence STeR leads the temporal metrics. Against OptiX the PSNR is
+effectively a tie, at 43.78 against 43.75, but temporal MAE, chroma variation and
+flicker are all clearly lower, and STeR reaches that from the colour pass alone.
+
+<div class="breakout">
+  <MetricTable
+    title="Spatial quality, single frame"
+    note="Same sequence and same conditions. Per-frame fidelity only: this table deliberately shows where STeR is not the strongest method."
+    columns={[
+      { label: "Method" },
+      { label: "PSNR (dB) ↑", numeric: true },
+      { label: "SSIM ↑", numeric: true },
+    ]}
+    rows={[
+      { cells: ["Intel OIDN", "41.74", "0.975"] },
+      { cells: ["NVIDIA OptiX", "40.69", "0.974"] },
+      { cells: ["STeR (ours)", "40.02", "0.970"], own: true },
+      { cells: ["NAFNet Temporal + AOV", "38.73", "0.966"] },
+      { cells: ["Noisy input", "36.82", "0.900"] },
+    ]}
+  />
+</div>
+
+Intel OIDN gives the strongest single-frame fidelity here. STeR trades a little
+per-frame sharpness for stability across the clip. This is the trade the
+project exists to make.
+
+## The dataset
+
+The paired dataset was built from real production scenes. For each scene the
+render was set up to produce one clean reference plus seven progressively
+noisier variants on a render farm.
+
+<div class="breakout">
+  <MetricTable
+    note="Approximate figures: sequence lengths vary between scenes. The source frames themselves are not distributed."
+    columns={[
+      { label: "Scenes", numeric: true },
+      { label: "Frames per scene", numeric: true },
+      { label: "Noisy variants", numeric: true },
+      { label: "Total rendered frames", numeric: true },
+    ]}
+    rows={[{ cells: ["≈75", "≈60", "7", "≈36,000"] }]}
+  />
+</div>
+
+Samples are temporally contiguous rather than shuffled stills, so the data
+carries real motion, occlusion, disocclusion, and changes in illumination and
+scene content. Crop, flip and rotation parameters are sampled once per temporal
+window, so augmentation never introduces frame-to-frame inconsistency that the
+renderer did not produce. Beyond the paired data the pipeline can synthesise
+Gaussian, Poisson-Gaussian, ISO-parameterised camera noise, residual patches
+sampled from real footage, and Monte Carlo render noise, with the chosen profile
+held constant inside each window.
+
+## From checkpoint to runtime
+
+The deployment runtime is written directly in C++ and CUDA against cuDNN and
+cuBLAS, with custom FP16 kernels, memory-mapped weight files with lazy
+host-to-device upload, RAII CUDA tensors, and deformable convolution through
+im2col plus a cuBLAS GEMM. Motion compensation uses hierarchical block matching
+with a coarse-to-fine pyramid and sub-pixel parabolic refinement, with DIS or
+RAFT optical flow available as public backends.
+
+Correctness is held to the Python reference by a parity harness that rejects any
+maximum per-pixel difference above 0.005, backed by C++/CUDA unit tests, Python
+tests, CLI integration tests and GPU CI.
+
+## What is public, and what is not
+
+The repository carries the data pipeline, reproducible public baselines,
+evaluation, model export and the C++/CUDA runtime. STeR's architecture, training
+recipe, calibration and weights stay private, as does the production dataset.
+
+<div class="breakout">
+  <PlateFigure
+    src="/figures/nafnet-temporal-baseline.svg"
+    width={1240}
+    height={560}
+    alt="Encoder-decoder diagram of the public NAFNet Temporal baseline, showing NAFBlock stacks at each resolution level, temporal mixing on the skip connections, and the internal structure of a NAFBlock."
+    caption="The public NAFNet Temporal baseline is an encoder-decoder of NAFBlocks with per-level temporal mixing on the skips. This is the reproducible public baseline, not STeR and not the inference runtime; STeR reuses the same training and export path while its own blocks stay private."
+    credit="Baseline after NAFNet, Chen et al., ECCV 2022."
+  />
+</div>
+
+A limitation worth stating plainly: fast non-rigid motion such as cloth or
+splashing water remains difficult, heavily compressed footage is out of
+distribution, and no GPU timings have been published yet.

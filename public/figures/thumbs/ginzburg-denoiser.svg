@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">
+  <rect width="320" height="240" fill="#ffffff"/>
+  <rect x="0.75" y="0.75" width="318.5" height="238.5" fill="none" stroke="#e6e9ee" stroke-width="1.5"/>
+
+  <text x="20" y="34" font-size="15" fill="#5b6472">Render cost per frame</text>
+
+  <!-- 4096 spp reference: tall bar -->
+  <rect x="20" y="52" width="86" height="120" fill="#e3e7ee"/>
+  <text x="63" y="192" font-size="17" fill="#1f2430" text-anchor="middle">4096</text>
+  <text x="63" y="212" font-size="13" fill="#5b6472" text-anchor="middle">spp</text>
+
+  <!-- 1024 spp + denoise: quarter bar -->
+  <rect x="128" y="142" width="86" height="30" fill="#0f4c81"/>
+  <text x="171" y="192" font-size="17" fill="#1f2430" text-anchor="middle">1024</text>
+  <text x="171" y="212" font-size="13" fill="#5b6472" text-anchor="middle">+ denoise</text>
+
+  <line x1="20" y1="172" x2="300" y2="172" stroke="#1f2430" stroke-width="1.5"/>
+
+  <text x="300" y="86" font-size="34" fill="#0f4c81" text-anchor="end">4×</text>
+  <text x="300" y="108" font-size="13" fill="#5b6472" text-anchor="end">fewer</text>
+  <text x="300" y="126" font-size="13" fill="#5b6472" text-anchor="end">samples</text>
+</svg>

@@ -1,0 +1,184 @@
+---
+import PageLayout from "../layouts/PageLayout.astro";
+import { site } from "../data/site";
+import { filmography } from "../data/career";
+---
+
+<PageLayout
+  title="About"
+  heading="About"
+  description="Dmitri Ginzburg, a software engineer in London working on machine learning, GPU computing and computer graphics."
+  lede="Software engineer in London. I work on machine-learning models, GPU inference, computer graphics and the production software that has to carry all three."
+  path="/about/"
+>
+  <div class="wrap">
+    <section class="block narrative">
+      <p>
+        My work has followed one question for most of my career: how to get a
+        high-quality image out of a renderer for less compute, and how to make
+        the software that does it reliable enough for other people to depend
+        on.
+      </p>
+      <p>
+        That started in animation and VFX, where I worked as a technical
+        director and supervisor before moving into software. The first denoiser
+        I built came out of a production problem: renders that were too
+        expensive at the sample counts the shots needed. It ended up
+        deployed across four titles. The same question later led into machine
+        learning: training models on rendered data, writing the CUDA kernels and
+        inference engines that run them, and building the backend services and
+        pipelines that put them in front of artists.
+      </p>
+      <p>
+        Today that means model development and evaluation, inference
+        optimisation, and the integration work that turns a trained model into
+        software other people use.
+      </p>
+      <ul class="actions">
+        <li><a href={site.links.github}>GitHub</a></li>
+        <li><a href={site.links.linkedin}>LinkedIn</a></li>
+        <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>Selected credits</h2>
+      <p class="note">
+        Feature and series work I contributed to as an engineer or technical
+        director. Full list on{" "}
+        <a href={site.links.imdb} target="_blank" rel="noopener">IMDb</a>; the
+        lighting and look-development side is on{" "}
+        <a href={site.links.artstation} target="_blank" rel="noopener">
+          ArtStation
+        </a>.
+      </p>
+      <ul class="credits">
+        {
+          filmography.map((film) => (
+            <li>
+              <span class="year">{film.year}</span>
+              <span class="film">
+                <em>{film.title}</em>
+                {film.studio && <span class="studio"> · {film.studio}</span>}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>Education</h2>
+      <ul class="education">
+        <li>
+          <h3>Bachelor of Engineering, Microelectronics</h3>
+          <p>
+            National Research University of Electronic Technology (MIET),
+            Moscow · 2008–2014
+          </p>
+        </li>
+        <li>
+          <h3>Machine Learning Specialization</h3>
+          <p>
+            DeepLearning.AI and Stanford Online · Issued December 2025 ·{" "}
+            <a
+              href="https://www.coursera.org/account/accomplishments/specialization/A6K6ATKRPELV"
+              target="_blank"
+              rel="noopener"
+            >Credential</a>
+          </p>
+        </li>
+      </ul>
+    </section>
+  </div>
+</PageLayout>
+
+<style>
+  .block {
+    padding-block: var(--space-6);
+    max-width: 74ch;
+  }
+
+  .block + .block {
+    border-top: 1px solid var(--rule);
+  }
+
+  .narrative {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 68ch;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    list-style: none;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    font-size: var(--text-sm);
+    font-weight: 550;
+  }
+
+  h2 {
+    font-size: var(--text-sm);
+    font-weight: 650;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: var(--space-5);
+  }
+
+  .note {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+    margin-bottom: var(--space-4);
+    max-width: 60ch;
+  }
+
+  .credits {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .credits li {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    gap: var(--space-4);
+    align-items: baseline;
+    font-size: var(--text-base);
+  }
+
+  .year {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--ink-faint);
+  }
+
+  .studio {
+    color: var(--ink-muted);
+    font-size: var(--text-sm);
+  }
+
+  .education {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .education h3 {
+    font-size: var(--text-base);
+    font-weight: 600;
+  }
+
+  .education p {
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+</style>

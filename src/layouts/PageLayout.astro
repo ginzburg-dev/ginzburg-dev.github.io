@@ -1,0 +1,33 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  heading?: string;
+  lede?: string;
+  path?: string;
+}
+
+const { title, description, heading, lede, path } = Astro.props;
+---
+
+<BaseLayout title={title} description={description} path={path}>
+  <div class="wrap head">
+    <h1>{heading ?? title}</h1>
+    {lede && <p class="lede">{lede}</p>}
+  </div>
+  <slot />
+</BaseLayout>
+
+<style>
+  .head {
+    padding-block: var(--space-7) var(--space-5);
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .lede {
+    max-width: 62ch;
+  }
+</style>

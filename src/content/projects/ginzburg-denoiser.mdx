@@ -1,0 +1,141 @@
+---
+title: "Ginzburg Denoiser"
+summary: "A deterministic spatiotemporal denoiser for Monte Carlo path-traced animation, deployed in production as standalone software, a Nuke plug-in and a C++/Python API."
+description: "Deterministic spatiotemporal denoiser for path-traced animation: AOV-guided spatial filtering with motion-compensated temporal accumulation, deployed on two animated series and two feature films."
+role: "Author; designed, built and deployed"
+years: "2016 – 2020"
+status: "production"
+areas: ["Production Software & Backend", "Graphics & GPU Engineering"]
+stack:
+  - "C++"
+  - "Python API"
+  - "Nuke plug-in"
+  - "Maya–RenderMan"
+  - "Pixar Tractor"
+  - "Linux / Windows"
+repo: "https://github.com/ginzburg-dev/ginzburg-denoiser"
+video: "https://www.youtube.com/watch?v=dqq-chYzEYs"
+featured: true
+order: 2
+---
+
+import PlateFigure from "../../components/PlateFigure.astro";
+import Figure from "../../components/Figure.astro";
+import showcase from "../../assets/projects/gd-showcase.jpg";
+import hairComparison from "../../assets/projects/gd-hair-comparison.jpg";
+import resultsGrid from "../../assets/projects/gd-denoising-results-grid.jpg";
+import passDenoising from "../../assets/projects/gd-pass-denoising.jpg";
+import nodeUi from "../../assets/projects/gd-node-ui.jpg";
+import productionPipeline from "../../assets/projects/gd-production-pipeline.jpg";
+
+<div class="breakout">
+  <Figure
+    src={showcase}
+    alt="An animated character from The Fixies, beside the logos of the four productions the denoiser was used on."
+    caption="Deployed on The Fixies, The Fixies: Top Secret, Fixies vs. Crabots and Fairy-teens."
+  />
+</div>
+
+## Why fewer samples are worth the engineering
+
+A path tracer renders each frame by estimating light transport from Monte Carlo
+samples. At a low sample count the estimator's variance shows up as stochastic
+noise. For independent samples the variance falls inversely with sample count,
+
+$$
+\mathrm{Var}[\hat{L}_N] = \frac{\sigma^2}{N},
+\qquad
+\sigma_{\hat{L}_N} = \frac{\sigma}{\sqrt{N}},
+$$
+
+so halving the noise costs roughly four times the samples. That cost is paid on
+every frame of every shot. Denoising a cheaper render is the only way out that
+does not scale the farm bill with the square of the quality target.
+
+<div class="breakout">
+  <PlateFigure
+    src="/figures/noise-render-time.svg"
+    width={1200}
+    height={560}
+    alt="Chart comparing a denoised 1024-sample render against a 4096-sample render-only reference of comparable quality, using four times fewer traced samples."
+    caption="A denoised 1024 spp render reaches quality comparable to a 4096 spp render-only reference, with four times fewer traced samples."
+  />
+</div>
+
+## How it works
+
+The system combines motion-compensated temporal accumulation with AOV-guided
+spatial filtering, applied across the beauty and lighting passes.
+
+Temporal processing came first in the design. Adjacent frames are aligned to the
+current frame, validation thresholds reject unreliable history, particularly
+around disocclusions and changing visibility, and the valid remainder is
+accumulated. That reduces noise and frame-to-frame flicker together, rather than
+trading one against the other.
+
+<div class="breakout">
+  <Figure
+    src={hairComparison}
+    alt="Three crops of auburn hair side by side, labelled Source, Ginzburg Denoiser and Other Tools."
+    caption="Hair, the hardest case: the noisy source, this denoiser, and other tools on the same frame. Fine strand detail is what aggressive filtering destroys first."
+  />
+</div>
+
+Spatially, Non-Local Means computes weights from image-patch similarity combined
+with differences in albedo, normal, depth and world position. Those guides stop
+samples being gathered across geometry and material boundaries. Outlier handling
+suppresses bright fireflies in high-variance specular and transmission
+components without applying the same aggressive smoothing to the rest of the
+image.
+
+Each guide carries an independent sigma parameter controlling its contribution
+to the filter weights:
+
+| AOV / pass | Purpose |
+| --- | --- |
+| `rgba / beauty` | Noisy combined render |
+| `diffuse / indirect diffuse` | Diffuse lighting components |
+| `specular / indirect specular` | Direct and indirect reflected lighting |
+| `refraction` | Transmission component |
+| `albedo` | Material colour independent of illumination |
+| `pos_world` | Surface correspondence and separation in world space |
+| `depth.Z` | Rejection across depth discontinuities |
+| `normal_world` | Surface orientation discontinuities |
+
+The method is deterministic. There is no training data, no network and no
+learned weights. Filtering is driven by renderer outputs, motion estimation and
+artist-defined parameters, which is what made it predictable enough to sit
+inside a nightly render pipeline.
+
+## Shipping it
+
+The denoiser was delivered three ways, because three different people needed it:
+a standalone Linux and Windows application for batch work, a Foundry Nuke
+plug-in for compositing artists, and a C++/Python API for integration into the
+Maya–RenderMan pipeline. In production it ran as a post-render processing stage
+managed by Pixar Tractor.
+
+<div class="breakout">
+  <Figure
+    src={nodeUi}
+    alt="The Ginzburg Denoiser plug-in open inside Foundry Nuke, with its parameter panel beside a rendered frame."
+    caption="The Nuke plug-in: the same filtering core, with its guide sigmas exposed to compositors in the application they already work in."
+  />
+</div>
+
+<div class="breakout">
+  <Figure
+    src={productionPipeline}
+    alt="A Pixar Tractor render-farm queue showing a production job dependency graph."
+    caption="In production the denoiser ran as a post-render stage in the Pixar Tractor job graph, so it became a dependency rather than a step someone had to remember."
+  />
+</div>
+
+It was deployed on *The Fixies*, *The Fixies: Top Secret*, *Fixies vs. Crabots*
+and *Fairy-teens*. On selected production shots it reduced visible Monte Carlo
+noise by up to **7×**, while preserving fur, hair, specular highlights and
+bump-mapped surface detail. Across production it helped cut estimated rendering
+costs by about **30%**.
+
+The [result reel](https://www.youtube.com/watch?v=dqq-chYzEYs) shows the temporal
+behaviour on real shots.

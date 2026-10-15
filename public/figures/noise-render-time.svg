@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">Monte Carlo noise versus render time</title>
+  <desc id="desc">A Monte Carlo convergence curve compares a 1024 samples-per-pixel render followed by denoising with a 4096 samples-per-pixel render-only reference. The denoised result is shown as visually comparable to the reference while using four times fewer traced samples.</desc>
+
+  <defs>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#42f574"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="560" fill="#070c0b"/>
+
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="58" y="52" fill="#f2f5f4" font-size="28" font-weight="700">Monte Carlo noise vs. render time</text>
+    <text x="58" y="80" fill="#9aa7a3" font-size="16">Noise falls as 1/√N, while path-tracing time grows approximately with samples per pixel</text>
+
+    <!-- Plot -->
+    <line x1="120" y1="124" x2="120" y2="420" stroke="#60706b" stroke-width="1.5"/>
+    <line x1="120" y1="420" x2="1120" y2="420" stroke="#60706b" stroke-width="1.5"/>
+
+    <line x1="120" y1="145" x2="1120" y2="145" stroke="#1e2926" stroke-width="1"/>
+    <line x1="120" y1="265" x2="1120" y2="265" stroke="#1e2926" stroke-width="1"/>
+    <line x1="120" y1="385" x2="1120" y2="385" stroke="#26322f" stroke-width="1"/>
+
+    <text x="99" y="150" fill="#9aa7a3" font-size="13" text-anchor="end">3.0</text>
+    <text x="99" y="270" fill="#9aa7a3" font-size="13" text-anchor="end">2.0</text>
+    <text x="99" y="390" fill="#9aa7a3" font-size="13" text-anchor="end">1.0</text>
+
+    <text x="48" y="275" fill="#b9c3c0" font-size="14" text-anchor="middle" transform="rotate(-90 48 275)">Relative visible noise / error</text>
+
+    <g fill="#9aa7a3" font-size="13" text-anchor="middle">
+      <text x="245" y="443">512 spp</text>
+      <text x="370" y="443">1024 spp</text>
+      <text x="620" y="443">2048 spp</text>
+      <text x="1120" y="443">4096 spp</text>
+
+      <text x="245" y="461">12.5% time</text>
+      <text x="370" y="461">25% time</text>
+      <text x="620" y="461">50% time</text>
+      <text x="1120" y="461">100% time</text>
+    </g>
+
+    <path d="M 245 166
+             C 286 200, 329 239, 370 265
+             C 444 304, 530 326, 620 335
+             C 774 357, 945 376, 1120 385"
+          fill="none" stroke="#ffb54a" stroke-width="4" stroke-linecap="round"/>
+
+    <g fill="#ffb54a">
+      <circle cx="245" cy="166" r="5"/>
+      <circle cx="370" cy="265" r="7"/>
+      <circle cx="620" cy="335" r="5"/>
+      <circle cx="1120" cy="385" r="7"/>
+    </g>
+
+    <!-- Denoising transition at 1024 spp -->
+    <line x1="370" y1="278" x2="370" y2="373" stroke="#42f574" stroke-width="4" marker-end="url(#arrow-green)"/>
+    <circle cx="370" cy="385" r="7" fill="#42f574"/>
+
+    <text x="392" y="244" fill="#f2f5f4" font-size="16" font-weight="700">1024 spp noisy input</text>
+    <text x="392" y="363" fill="#f2f5f4" font-size="16" font-weight="700">Denoised at 1024 spp</text>
+    <text x="392" y="407" fill="#b9c3c0" font-size="14">Ginzburg Denoiser</text>
+
+    <!-- Reference noise level -->
+    <line x1="380" y1="385" x2="1110" y2="385" stroke="#42f574" stroke-width="2" stroke-dasharray="7 7"/>
+    <text x="780" y="407" fill="#b9c3c0" font-size="14" text-anchor="middle">Comparable to the 4096 spp reference</text>
+
+    <text x="1100" y="352" fill="#f2f5f4" font-size="16" font-weight="700" text-anchor="end">4096 spp render-only reference</text>
+
+    <!-- Render-time saving -->
+    <line x1="370" y1="490" x2="1120" y2="490" stroke="#42f574" stroke-width="2"/>
+    <line x1="370" y1="482" x2="370" y2="498" stroke="#42f574" stroke-width="2"/>
+    <line x1="1120" y1="482" x2="1120" y2="498" stroke="#42f574" stroke-width="2"/>
+    <text x="745" y="518" fill="#f2f5f4" font-size="17" font-weight="700" text-anchor="middle">4x fewer traced samples · approximately 75% less path-tracing time</text>
+
+    <text x="600" y="545" fill="#7f8c88" font-size="13" text-anchor="middle">Illustrative fixed-sampling comparison. The 75% figure covers path tracing only; production-wide rendering cost was about 30% lower.</text>
+  </g>
+</svg>

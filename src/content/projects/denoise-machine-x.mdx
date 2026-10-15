@@ -1,0 +1,99 @@
+---
+title: "Denoise Machine X"
+summary: "A modular C++20 denoising plug-in system that separates image representation, filtering algorithms, execution backends and host integration."
+description: "Open-source C++20 denoising framework for production rendering pipelines: multi-layer OpenEXR I/O, a multi-frame image core, AOV-guided Non-Local Means and CPU/CUDA convolution."
+role: "Author"
+years: "2025 – present"
+status: "development"
+areas: ["Production Software & Backend", "Graphics & GPU Engineering"]
+stack:
+  - "C++20"
+  - "CUDA"
+  - "OpenEXR"
+  - "CMake"
+  - "GoogleTest"
+  - "GitHub Actions"
+repo: "https://github.com/ginzburg-dev/denoise-machine-x"
+featured: false
+order: 4
+---
+
+import Figure from "../../components/Figure.astro";
+import MilestoneList from "../../components/MilestoneList.astro";
+import room from "../../assets/projects/dmx-room-comparison.jpg";
+
+Production denoising is never just a filter. A usable system has to move
+multi-layer EXR data through algorithms, CPU and GPU backends, frame sequences,
+render-farm jobs and artist-facing tools while keeping one consistent data
+model. DMX is being built as that common layer, so a new method can be added
+without rebuilding the pipeline around it.
+
+<div class="breakout">
+  <Figure
+    src={room}
+    alt="Split comparison of an interior kitchen scene: the left side is a noisy low-sample Monte Carlo render, the right side the denoised result."
+    caption="Split comparison: low-sample Monte Carlo render (left) and denoised result (right)."
+    credit='Based on <a href="https://www.blender.org/download/demo/splash/blender-3.5-splash.blend">Blender 3.5: Cozy Kitchen</a> by <a href="https://www.artstation.com/nickyblender">Nicole Morena</a>, licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>. Rendered, denoised and assembled by Dmitri Ginzburg; this derived image is likewise licensed <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.'
+    full="/figures/originals/dmx-room-comparison.jpg"
+  />
+</div>
+
+## Where the project actually is
+
+The separation of concerns is the point of the design, so the honest status is
+per-layer rather than per-project.
+
+<div class="breakout">
+  <MilestoneList
+    milestones={[
+      {
+        label: "Multi-layer, multi-frame image core",
+        state: "implemented",
+        detail: "Image types and views over multi-layer, multi-frame data.",
+      },
+      {
+        label: "Multi-layer OpenEXR I/O",
+        state: "implemented",
+      },
+      {
+        label: "AOV-guided Non-Local Means (CPU)",
+        state: "implemented",
+      },
+      {
+        label: "CPU and CUDA convolution",
+        state: "implemented",
+        detail: "CUDA convolution is implemented; not every filter has a GPU backend.",
+      },
+      {
+        label: "Filter registration and factory, thread-pool execution",
+        state: "implemented",
+      },
+      {
+        label: "CMake presets, GoogleTest, Linux CI",
+        state: "implemented",
+      },
+      {
+        label: "End-to-end command-line interface",
+        state: "planned",
+      },
+      {
+        label: "Motion-aware temporal filtering",
+        state: "planned",
+      },
+      {
+        label: "Neural backend integration",
+        state: "planned",
+      },
+      {
+        label: "CUDA Non-Local Means",
+        state: "planned",
+      },
+      {
+        label: "SDK packaging and Nuke/OFX adapters",
+        state: "planned",
+      },
+    ]}
+  />
+</div>
+
+The image core, EXR I/O and filters are covered by CI on Linux.

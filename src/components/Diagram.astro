@@ -1,0 +1,62 @@
+---
+interface Props {
+  caption: string;
+  /** Accessible description of what the diagram shows. */
+  label: string;
+  credit?: string;
+}
+
+const { caption, label, credit } = Astro.props;
+---
+
+<figure class="diagram">
+  <div class="plate" role="img" aria-label={label}>
+    <slot />
+  </div>
+  <figcaption>
+    <span>{caption}</span>
+    {credit && <span class="credit" set:html={credit} />}
+  </figcaption>
+</figure>
+
+<style>
+  .diagram {
+    margin: 0;
+  }
+
+  .plate {
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-lg);
+    background: var(--paper-raised);
+    padding: var(--space-5) var(--space-4);
+    overflow-x: auto;
+  }
+
+  .plate :global(svg) {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block;
+    margin-inline: auto;
+  }
+
+  /* Diagrams are authored against currentColor + tokens so they theme. */
+  .plate {
+    color: var(--ink);
+  }
+
+  figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--ink-muted);
+  }
+
+  .credit {
+    font-size: var(--text-xs);
+    color: var(--ink-faint);
+  }
+</style>

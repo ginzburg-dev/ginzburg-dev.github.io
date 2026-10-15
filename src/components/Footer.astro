@@ -1,0 +1,55 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap inner">
+    <p class="who">
+      <strong>Dmitri Ginzburg</strong> · Software Engineer · London, UK
+    </p>
+    <ul class="links">
+      <li><a href="https://github.com/ginzburg-dev">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/ginzburg-cg">LinkedIn</a></li>
+      <li><a href="mailto:ginzburgdd@gmail.com">Email</a></li>
+    </ul>
+    <p class="fine">
+      © {year} Dmitri Ginzburg. Third-party images retain their own licences and
+      are credited where they appear.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-9);
+    border-top: 1px solid var(--rule);
+    padding-block: var(--space-6) var(--space-7);
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+
+  .inner {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .who strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .fine {
+    font-size: var(--text-xs);
+    color: var(--ink-faint);
+    max-width: 60ch;
+  }
+</style>

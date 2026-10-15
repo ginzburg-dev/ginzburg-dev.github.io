@@ -1,0 +1,47 @@
+---
+import "@fontsource-variable/inter";
+import "katex/dist/katex.min.css";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  /** Page-specific canonical path, e.g. "/projects/". */
+  path?: string;
+}
+
+const { title, description, path } = Astro.props;
+
+const siteName = "Dmitri Ginzburg";
+const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+const canonical = new URL(path ?? Astro.url.pathname, Astro.site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta name="twitter:card" content="summary" />
+
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+{/* Restore an explicit choice before first paint. Dark remains the default. */}
+<script is:inline>
+  (() => {
+    try {
+      const stored = localStorage.getItem("theme");
+      if (stored === "light" || stored === "dark") {
+        document.documentElement.dataset.theme = stored;
+      }
+    } catch {
+      /* private mode or blocked storage: keep the default dark theme */
+    }
+  })();
+</script>

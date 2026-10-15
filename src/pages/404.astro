@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That page does not exist."
+  path="/404.html"
+>
+  <section class="wrap">
+    <h1>Page not found</h1>
+    <p>
+      That page does not exist. Try <a href="/projects/">Projects</a>,{" "}
+      <a href="/research/">Research</a> or{" "}
+      <a href="/about/">About</a>.
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  section {
+    padding-block: var(--space-9);
+    display: grid;
+    gap: var(--space-4);
+  }
+</style>

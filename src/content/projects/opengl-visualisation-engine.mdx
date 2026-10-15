@@ -1,0 +1,31 @@
+---
+title: "C++/OpenGL Interactive 3D Engine"
+summary: "A custom real-time engine for interactive 3D visualisation of microelectronic structures, with a companion flight simulator, presented at MIET in 2012."
+description: "Custom C++/OpenGL real-time engine for interactive 3D visualisation of microelectronic structures, built from the rendering pipeline up and presented at MIET in 2012."
+role: "Author"
+years: "2012"
+status: "archived"
+areas: ["Graphics & GPU Engineering"]
+stack:
+  - "C++"
+  - "OpenGL"
+  - "GLSL"
+featured: false
+order: 6
+---
+
+This was my first engine and the foundation for the graphics work that followed.
+It rendered microelectronic structures interactively in 3D, and I presented it
+at the National Research University of Electronic Technology (MIET) in 2012. A
+C++/OpenGL flight simulator was built alongside it on the same foundations.
+
+The rendering pipeline was implemented directly rather than assembled from a
+framework: GLSL shader compilation, GPU vertex and index buffers, textures,
+framebuffers and render-target handling, geometry submission and draw-call
+management. Writing that layer by hand is where the habits came from: being
+specific about how data reaches the GPU, and what the cost of each frame
+actually is.
+
+The project is complete and belongs to 2012. The engine I am building now,
+[Radiance4D](/projects/radiance4d/), is new work rather than a continuation of
+this one.

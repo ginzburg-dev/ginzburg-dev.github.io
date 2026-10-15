@@ -1,0 +1,135 @@
+---
+title: "Radiance4D"
+summary: "A hybrid real-time rendering and spatiotemporal reconstruction engine in C++20 and Direct3D 12."
+description: "Radiance4D: an in-development hybrid real-time rendering and spatiotemporal reconstruction engine built in C++20, Direct3D 12 and HLSL."
+role: "Author"
+status: "development"
+areas: ["Graphics & GPU Engineering"]
+stack:
+  - "C++20"
+  - "Direct3D 12"
+  - "HLSL"
+repo: "https://github.com/ginzburg-dev/radiance4d"
+featured: false
+order: 5
+---
+
+import MilestoneList from "../../components/MilestoneList.astro";
+import Diagram from "../../components/Diagram.astro";
+import Figure from "../../components/Figure.astro";
+import cover from "../../assets/projects/r4d-cover.jpg";
+
+<div class="breakout">
+  <Figure
+    src={cover}
+    alt="A knot-shaped object and a ground plane rendered as 3D Gaussian splats on black, with camera rays from a virtual camera, bounce rays and shadow rays toward a light."
+    caption="Gaussian splats with camera, bounce and shadow rays. A synthetic scene rendered to illustrate the technique, not a capture from the engine."
+  />
+</div>
+
+Radiance4D is my current graphics engine project: a hybrid real-time renderer
+built around spatiotemporal reconstruction, written in C++20 against Direct3D 12
+with HLSL shaders.
+
+It pulls together the two strands I have worked on longest. Real-time rendering
+goes back to writing my own OpenGL engine and later production work in Unreal
+Engine; spatiotemporal reconstruction is the same problem as temporal denoising,
+approached from the renderer's side rather than from post-processing, using
+information across frames to produce an image that is both cheaper and steadier
+than any single frame can be.
+
+## Architecture
+
+<div class="breakout">
+  <Diagram
+    label="Layered diagram of the planned Radiance4D architecture: scene and asset input feeds a render graph, which drives rasterised, ray-traced and Gaussian splatting passes, then a spatiotemporal reconstruction stage, over a graphics backend layer of Direct3D 12 and Vulkan."
+    caption="The engine architecture: a render graph driving rasterised, ray-traced and Gaussian splatting passes into a spatiotemporal reconstruction stage, over Direct3D 12 with Vulkan to follow."
+  >
+    <svg viewBox="0 0 860 422" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+      <defs>
+        <marker id="r4d-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor" />
+        </marker>
+      </defs>
+
+      <g stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.45" marker-end="url(#r4d-arrow)">
+        <path d="M 430 60 L 430 86" />
+        <path d="M 430 130 L 430 156" />
+        <path d="M 430 254 L 430 280" />
+        <path d="M 430 338 L 430 352" />
+      </g>
+
+      <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.8">
+        <rect x="250" y="16" width="360" height="44" rx="4" />
+        <rect x="250" y="86" width="360" height="44" rx="4" />
+        <rect x="40" y="156" width="246" height="98" rx="4" />
+        <rect x="306" y="156" width="246" height="98" rx="4" />
+        <rect x="572" y="156" width="248" height="98" rx="4" />
+        <rect x="250" y="280" width="360" height="58" rx="4" />
+        <rect x="40" y="352" width="380" height="54" rx="4" />
+        <rect x="440" y="352" width="380" height="54" rx="4" />
+      </g>
+
+      <g fill="currentColor" text-anchor="middle">
+        <text x="430" y="43" font-size="13">Scene, assets, photogrammetry ingest</text>
+        <text x="430" y="113" font-size="13">Render graph</text>
+
+        <text x="163" y="196" font-size="13">Rasterised passes</text>
+        <text x="429" y="196" font-size="13">Ray tracing</text>
+        <text x="696" y="196" font-size="13">Gaussian splatting</text>
+
+        <text x="430" y="303" font-size="13">Spatiotemporal reconstruction</text>
+
+        <text x="230" y="376" font-size="13">Direct3D 12</text>
+        <text x="630" y="376" font-size="13">Vulkan</text>
+      </g>
+
+      <g fill="currentColor" font-size="11" opacity="0.6" text-anchor="middle">
+        <text x="163" y="218">geometry, materials,</text>
+        <text x="163" y="233">lighting</text>
+        <text x="429" y="218">reflection, shadow,</text>
+        <text x="429" y="233">global illumination</text>
+        <text x="696" y="218">3D and 4D radiance</text>
+        <text x="696" y="233">fields</text>
+        <text x="430" y="324">reuse across frames · temporal stability</text>
+        <text x="230" y="394">first backend · HLSL shaders</text>
+        <text x="630" y="394">intended to follow</text>
+      </g>
+
+      <text x="40" y="34" font-size="11" fill="currentColor" opacity="0.6" text-anchor="start">C++20 · HLSL</text>
+    </svg>
+  </Diagram>
+</div>
+
+## Roadmap
+
+<div class="breakout">
+  <MilestoneList
+    milestones={[
+      {
+        label: "Direct3D 12 foundation",
+        state: "planned",
+        detail: "Device, swap chain, command submission and resource management.",
+      },
+      {
+        label: "Visual renderer",
+        state: "planned",
+        detail: "The first milestone that puts images on screen.",
+      },
+      { label: "Vulkan backend", state: "planned" },
+      { label: "Ray tracing", state: "planned" },
+      { label: "3D and 4D Gaussian Splatting", state: "planned" },
+      { label: "Photogrammetry ingest", state: "planned" },
+      { label: "Temporal reconstruction", state: "planned" },
+    ]}
+  />
+</div>
+
+The source code is available on GitHub:
+[radiance4d](https://github.com/ginzburg-dev/radiance4d).
+
+## Related earlier work
+
+Radiance4D is a separate project from the
+[C++/OpenGL visualisation engine](/projects/opengl-visualisation-engine/) I
+built in 2012, which remains its own completed project.

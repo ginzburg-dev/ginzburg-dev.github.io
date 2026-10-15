@@ -1,0 +1,57 @@
+---
+export type Status =
+  | "production"
+  | "released"
+  | "research"
+  | "development"
+  | "archived";
+
+interface Props {
+  status: Status;
+}
+
+const { status } = Astro.props;
+
+const copy: Record<Status, string> = {
+  production: "Deployed in production",
+  released: "Released",
+  research: "Research",
+  development: "In development",
+  archived: "Completed",
+};
+---
+
+<span class={`badge ${status}`}>{copy[status]}</span>
+
+<style>
+  .badge {
+    display: inline-block;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 0.14em 0.5em;
+    border-radius: var(--radius);
+    white-space: nowrap;
+  }
+
+  .production {
+    color: var(--status-production);
+    background: var(--status-production-bg);
+  }
+  .released {
+    color: var(--status-archived);
+    background: var(--status-archived-bg);
+  }
+  .research {
+    color: var(--status-research);
+    background: var(--status-research-bg);
+  }
+  .development {
+    color: var(--status-development);
+    background: var(--status-development-bg);
+  }
+  .archived {
+    color: var(--status-archived);
+    background: var(--status-archived-bg);
+  }
+</style>

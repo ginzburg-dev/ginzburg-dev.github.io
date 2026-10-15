@@ -1,0 +1,78 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+import { talks } from "../../data/talks";
+---
+
+<PageLayout
+  title="Talks"
+  heading="Talks"
+  description="Selected technical talks and lectures by Dmitri Ginzburg."
+  lede="Selected talks and lectures on rendering, denoising and computer graphics."
+  path="/talks/"
+>
+  <div class="wrap">
+    <ol class="talks">
+      {
+        talks.map((talk) => (
+          <li>
+            <span class="year">{talk.year}</span>
+            <div>
+              <h2>
+                {talk.project ? (
+                  <a href={talk.project}>{talk.title}</a>
+                ) : (
+                  talk.title
+                )}
+              </h2>
+              <p>{talk.venue}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</PageLayout>
+
+<style>
+  .talks {
+    max-width: 74ch;
+    margin: 0;
+    padding: var(--space-6) 0;
+    list-style: none;
+    display: grid;
+  }
+
+  .talks li {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .talks li:first-child {
+    padding-top: 0;
+  }
+
+  .year {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--ink-faint);
+  }
+
+  h2 {
+    max-width: 54ch;
+    font-size: var(--text-base);
+    font-weight: 600;
+  }
+
+  h2 a {
+    color: var(--ink);
+  }
+
+  p {
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+</style>

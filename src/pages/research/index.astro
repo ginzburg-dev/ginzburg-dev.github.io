@@ -1,0 +1,112 @@
+---
+import { Image } from "astro:assets";
+import PageLayout from "../../layouts/PageLayout.astro";
+import figure1 from "../../assets/research/cvmp-figure-1.png";
+import { paper } from "../../data/research";
+---
+
+<PageLayout
+  title="Research"
+  heading="Research"
+  description="Research on temporal denoising for rendered image sequences."
+  path="/research/"
+>
+  <div class="wrap">
+    <section class="block">
+      <h2>Paper</h2>
+      <article class="paper">
+        <h3>{paper.title}</h3>
+        <p class="status">
+          <span class="pill">{paper.status}</span>
+          <span class="venue">{paper.venue}</span>
+        </p>
+        <Image
+          class="figure"
+          src={figure1}
+          alt={paper.figureAlt}
+          widths={[720, 1200, 1800]}
+          sizes="(min-width: 80rem) 74ch, calc(100vw - 2rem)"
+          quality={90}
+        />
+        <div class="abstract">
+          <h4>Abstract</h4>
+          {paper.abstract.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+      </article>
+    </section>
+
+  </div>
+</PageLayout>
+
+<style>
+  .block {
+    padding-block: var(--space-6);
+    max-width: 74ch;
+  }
+
+  h2 {
+    font-size: var(--text-sm);
+    font-weight: 650;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: var(--space-4);
+  }
+
+  .paper h3 {
+    font-size: var(--text-2xl);
+    max-width: 30ch;
+  }
+
+  .status {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+    flex-wrap: wrap;
+    margin-block: var(--space-3);
+  }
+
+  .pill {
+    font-size: var(--text-xs);
+    font-weight: 650;
+    padding: 0.16em 0.55em;
+    border-radius: var(--radius);
+    color: var(--status-research);
+    background: var(--status-research-bg);
+    white-space: nowrap;
+  }
+
+  .venue {
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+
+  .figure {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-block: var(--space-5);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    background: white;
+  }
+
+  .abstract {
+    max-width: 68ch;
+  }
+
+  .abstract h4 {
+    margin-bottom: var(--space-3);
+    font-size: var(--text-base);
+    font-weight: 650;
+  }
+
+  .abstract p {
+    color: var(--ink-muted);
+  }
+
+  .abstract p + p {
+    margin-top: var(--space-4);
+  }
+
+</style>
