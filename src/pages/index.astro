@@ -6,14 +6,25 @@ import { site } from "../data/site";
 import gdResults from "../assets/projects/gd-denoising-results-grid.jpg";
 import gndLion from "../assets/projects/gnd-noise-to-clean.jpg";
 import r4dCover from "../assets/projects/r4d-cover.jpg";
+import ncCover from "../assets/projects/nc-cover.jpg";
 import paperFigure from "../assets/research/cvmp-figure-1.png";
 import { paper } from "../data/research";
 
 const projects = await getCollection("projects");
 const byId = Object.fromEntries(projects.map((p) => [p.id, p]));
 
-/** Three featured projects, in the order they should be read. */
+/** Featured projects, in the order they should be read. */
 const featured = [
+  {
+    entry: byId["neural-composer"],
+    thumb: ncCover,
+    thumbCredit: "Strawberry capture by Dany Bittel, CC BY 4.0",
+    thumbAlt:
+      "Neural Composer's viewer showing a rendered Gaussian splat strawberry on a checkerboard, above a node graph with ReadGeo, TransformGeo, Scene, Camera and ScanlineRender nodes.",
+    blurb:
+      "Node-based compositing software with machine learning built into the graph: SAM roto, ViTMatte, diffusion, ComfyUI and Gaussian splats next to keying, cleanup and tracking.",
+    meta: "In development · Python · Qt · OpenGL · PyTorch",
+  },
   {
     entry: byId["radiance4d"],
     thumb: r4dCover,
