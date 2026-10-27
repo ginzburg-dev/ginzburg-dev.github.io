@@ -1,135 +1,171 @@
 ---
 title: "Radiance4D"
-summary: "A hybrid real-time rendering and spatiotemporal reconstruction engine in C++20 and Direct3D 12."
-description: "Radiance4D: an in-development hybrid real-time rendering and spatiotemporal reconstruction engine built in C++20, Direct3D 12 and HLSL."
+summary: "A real-time renderer for Gaussian splats and meshes, for virtual production, AR/VR and synthetic training data for robots and autonomous vehicles. It draws a million splats at 1080p in 9.7 ms."
+description: "Radiance4D: a real-time Gaussian splat and mesh renderer in C++20 with Direct3D 12 and Vulkan backends, one HLSL shader set, GPU radix sort and tiled rasterisation."
 role: "Author"
 status: "development"
 areas: ["Graphics & GPU Engineering"]
 stack:
   - "C++20"
   - "Direct3D 12"
+  - "Vulkan"
   - "HLSL"
+  - "Dear ImGui"
 repo: "https://github.com/ginzburg-dev/radiance4d"
 featured: false
 order: 5
 ---
 
 import MilestoneList from "../../components/MilestoneList.astro";
-import Diagram from "../../components/Diagram.astro";
+import MetricTable from "../../components/MetricTable.astro";
 import Figure from "../../components/Figure.astro";
-import cover from "../../assets/projects/r4d-cover.jpg";
+import Gallery from "../../components/Gallery.astro";
+import hero from "../../assets/projects/r4d-train.jpg";
+import trainSide from "../../assets/projects/r4d-train-side.jpg";
+import trainYard from "../../assets/projects/r4d-train-yard.jpg";
+import tomatoesA from "../../assets/projects/r4d-tomatoes-a.jpg";
+import tomatoesB from "../../assets/projects/r4d-tomatoes-b.jpg";
+import overlay from "../../assets/projects/r4d-overlay.jpg";
+import helmet from "../../assets/projects/r4d-helmet.jpg";
 
 <div class="breakout">
   <Figure
-    src={cover}
-    alt="A knot-shaped object and a ground plane rendered as 3D Gaussian splats on black, with camera rays from a virtual camera, bounce rays and shadow rays toward a light."
-    caption="Gaussian splats with camera, bounce and shadow rays. A synthetic scene rendered to illustrate the technique, not a capture from the engine."
+    src={hero}
+    alt="A green Western Pacific 713 locomotive seen head-on in a sunny rail yard, with red and blue carriages beside it, rendered from Gaussian splats."
+    caption="1,026,508 Gaussian splats rendered by Radiance4D at 1920×1080 on an RTX 3080 Laptop GPU."
+    credit="Splats: INRIA 3D Gaussian Splatting pre-trained <i>train</i> (Tanks and Temples)."
   />
 </div>
 
-Radiance4D is my current graphics engine project: a hybrid real-time renderer
-built around spatiotemporal reconstruction, written in C++20 against Direct3D 12
-with HLSL shaders.
+Radiance4D is my real-time rendering engine for 3D Gaussian splats and
+triangle meshes. It has native Direct3D 12 and Vulkan backends, and one set of
+HLSL shaders compiles for both. A photogrammetry scan and a CG model can sit in
+the same frame and occlude each other correctly.
 
-It pulls together the two strands I have worked on longest. Real-time rendering
-goes back to writing my own OpenGL engine and later production work in Unreal
-Engine; spatiotemporal reconstruction is the same problem as temporal denoising,
-approached from the renderer's side rather than from post-processing, using
-information across frames to produce an image that is both cheaper and steadier
-than any single frame can be.
+I'm building it for three kinds of work:
 
-## Architecture
+- **Virtual production and VR.** A scanned location and CG elements have to
+  render live, at a steady frame rate, from any camera.
+- **AR and mixed reality.** CG has to sit convincingly inside a captured real
+  space.
+- **Synthetic data.** Rendering captured scenes from new viewpoints, with
+  exact camera poses and depth, to produce training data for robots and
+  autonomous vehicles.
+
+The reference splatting code is CUDA, so it only runs on NVIDIA. This
+pipeline is plain HLSL compute and runs on any Direct3D 12 or Vulkan GPU.
+
+The project pulls together the two things I have worked on longest. One is
+real-time rendering, from my own OpenGL engine to production work in Unreal
+Engine. The other is temporal reconstruction, which is the same problem as
+temporal denoising, approached from inside the renderer.
+
+## One renderer, different captures
 
 <div class="breakout">
-  <Diagram
-    label="Layered diagram of the planned Radiance4D architecture: scene and asset input feeds a render graph, which drives rasterised, ray-traced and Gaussian splatting passes, then a spatiotemporal reconstruction stage, over a graphics backend layer of Direct3D 12 and Vulkan."
-    caption="The engine architecture: a render graph driving rasterised, ray-traced and Gaussian splatting passes into a spatiotemporal reconstruction stage, over Direct3D 12 with Vulkan to follow."
-  >
-    <svg viewBox="0 0 860 422" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
-      <defs>
-        <marker id="r4d-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor" />
-        </marker>
-      </defs>
-
-      <g stroke="currentColor" stroke-width="1.2" fill="none" opacity="0.45" marker-end="url(#r4d-arrow)">
-        <path d="M 430 60 L 430 86" />
-        <path d="M 430 130 L 430 156" />
-        <path d="M 430 254 L 430 280" />
-        <path d="M 430 338 L 430 352" />
-      </g>
-
-      <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.8">
-        <rect x="250" y="16" width="360" height="44" rx="4" />
-        <rect x="250" y="86" width="360" height="44" rx="4" />
-        <rect x="40" y="156" width="246" height="98" rx="4" />
-        <rect x="306" y="156" width="246" height="98" rx="4" />
-        <rect x="572" y="156" width="248" height="98" rx="4" />
-        <rect x="250" y="280" width="360" height="58" rx="4" />
-        <rect x="40" y="352" width="380" height="54" rx="4" />
-        <rect x="440" y="352" width="380" height="54" rx="4" />
-      </g>
-
-      <g fill="currentColor" text-anchor="middle">
-        <text x="430" y="43" font-size="13">Scene, assets, photogrammetry ingest</text>
-        <text x="430" y="113" font-size="13">Render graph</text>
-
-        <text x="163" y="196" font-size="13">Rasterised passes</text>
-        <text x="429" y="196" font-size="13">Ray tracing</text>
-        <text x="696" y="196" font-size="13">Gaussian splatting</text>
-
-        <text x="430" y="303" font-size="13">Spatiotemporal reconstruction</text>
-
-        <text x="230" y="376" font-size="13">Direct3D 12</text>
-        <text x="630" y="376" font-size="13">Vulkan</text>
-      </g>
-
-      <g fill="currentColor" font-size="11" opacity="0.6" text-anchor="middle">
-        <text x="163" y="218">geometry, materials,</text>
-        <text x="163" y="233">lighting</text>
-        <text x="429" y="218">reflection, shadow,</text>
-        <text x="429" y="233">global illumination</text>
-        <text x="696" y="218">3D and 4D radiance</text>
-        <text x="696" y="233">fields</text>
-        <text x="430" y="324">reuse across frames · temporal stability</text>
-        <text x="230" y="394">first backend · HLSL shaders</text>
-        <text x="630" y="394">intended to follow</text>
-      </g>
-
-      <text x="40" y="34" font-size="11" fill="currentColor" opacity="0.6" text-anchor="start">C++20 · HLSL</text>
-    </svg>
-  </Diagram>
+  <Gallery
+    items={[
+      { src: trainSide, alt: "The Western Pacific locomotive from the side, with its lettering and the gravel track bed in front." },
+      { src: trainYard, alt: "The rail yard from above the tracks, with the locomotive and carriages lined up and trees behind." },
+      { src: tomatoesA, alt: "Tomatoes on a white plate, rendered from Gaussian splats on a black background." },
+      { src: tomatoesB, alt: "The same plate of tomatoes from the opposite side." },
+    ]}
+    caption="The same build on a 1.03M-splat outdoor reconstruction and a 218k-splat tabletop capture, each from two directions. Every image is a headless capture from the engine at 1600×900."
+    credit="Splats: INRIA 3DGS <i>train</i> (Tanks and Temples); <i>Tomatoes</i> by Simon Bethke, CC BY 4.0."
+  />
 </div>
+
+`.ply` files from the reference 3D Gaussian Splatting implementation load
+directly, including degree-3 spherical harmonics and the conversion out of
+COLMAP's coordinate frame. A small Python tool turns a COLMAP sparse model
+into a `.ply` the engine can render.
+
+## The splat pipeline
+
+Every frame runs five GPU passes:
+
+1. **Cull and project.** Each 3D covariance goes through the perspective
+   Jacobian and becomes a screen-space ellipse. Spherical-harmonic colour is
+   evaluated here, once per splat.
+2. **Depth sort.** A GPU radix sort covers the whole scene. The key carries
+   the full float depth, so the order is exact and the sort is stable.
+3. **Tile binning.** The screen is split into 16×16 tiles. Splat–tile pairs
+   are built in depth order and sorted by tile, so each tile's list stays
+   depth-sorted without a second key.
+4. **Tile rasterise.** One compute group runs per tile and one thread per
+   pixel, front to back. A pixel stops as soon as it saturates.
+5. **Composite.** Splats are blended over the mesh image, depth-tested per
+   splat against what the mesh pass wrote.
+
+<div class="breakout">
+  <Figure
+    src={overlay}
+    alt="The locomotive scene with the engine's overlay in the top-left corner, listing GPU time for cull, depth sort, binning, tile sort, rasterise and composite."
+    caption="The overlay times every pass with GPU timestamps on both backends. The same numbers come out of --benchmark."
+    credit="Splats: INRIA 3DGS <i>train</i> (Tanks and Temples)."
+  />
+</div>
+
+<MetricTable
+  title="One frame of train at 1920×1080"
+  note="1,026,508 splats, SH degree 3. RTX 3080 Laptop GPU, i7-11800H, RelWithDebInfo, vsync off, mean of 200 frames. With the sort on the CPU, the same scene took 96 ms."
+  columns={[
+    { label: "Pass" },
+    { label: "Direct3D 12", numeric: true },
+    { label: "Vulkan", numeric: true },
+  ]}
+  rows={[
+    { cells: ["Cull", "0.91 ms", "0.74 ms"] },
+    { cells: ["Depth sort", "0.81 ms", "0.74 ms"] },
+    { cells: ["Binning", "1.38 ms", "1.27 ms"] },
+    { cells: ["Tile sort", "2.74 ms", "4.00 ms"] },
+    { cells: ["Rasterise", "3.82 ms", "3.59 ms"] },
+    { cells: ["Composite", "0.04 ms", "0.04 ms"] },
+    { cells: ["Frame", "9.70 ms", "10.38 ms"], own: true },
+  ]}
+/>
+
+## Meshes and shading
+
+<div class="breakout">
+  <Figure
+    src={helmet}
+    alt="The Damaged Helmet glTF model rendered with scratched white paint, metal parts and hoses on a dark background."
+    caption="The mesh path: Cook–Torrance GGX with glTF 2.0 materials, three analytic lights, a 2048 shadow map with PCF, image-based lighting and ACES tone mapping."
+    credit="Damaged Helmet by ctxwing, based on work by theblueturtle_, CC BY 4.0."
+  />
+</div>
+
+On Direct3D 12 the engine uses Enhanced Barriers, the retail Agility SDK and
+DRED. On Vulkan it uses dynamic rendering and synchronization2. One vendored
+DXC compiles every shader to both DXIL and SPIR-V at build time.
+
+The tests run the splat pipeline on WARP, Microsoft's software rasteriser, so
+they need no GPU. Image regression compares renders against stored
+references, and a parity test holds the two backends to the same image within
+1/255 per channel. Captures are deterministic: two runs of the same command
+produce byte-identical images.
 
 ## Roadmap
 
 <div class="breakout">
   <MilestoneList
     milestones={[
-      {
-        label: "Direct3D 12 foundation",
-        state: "planned",
-        detail: "Device, swap chain, command submission and resource management.",
-      },
-      {
-        label: "Visual renderer",
-        state: "planned",
-        detail: "The first milestone that puts images on screen.",
-      },
-      { label: "Vulkan backend", state: "planned" },
-      { label: "Ray tracing", state: "planned" },
-      { label: "3D and 4D Gaussian Splatting", state: "planned" },
-      { label: "Photogrammetry ingest", state: "planned" },
+      { label: "Direct3D 12 foundation", state: "implemented", detail: "Device, command submission, resources, Enhanced Barriers, Agility SDK." },
+      { label: "Interactive PBR viewer", state: "implemented", detail: "glTF 2.0, shadows, image-based lighting, overlay." },
+      { label: "Vulkan backend", state: "implemented", detail: "One HLSL source for both APIs, held to parity by a test." },
+      { label: "Static Gaussian splatting", state: "implemented", detail: "GPU sort and tiled rasterisation at a million splats." },
+      { label: "Reconstruction ingest", state: "implemented", detail: "COLMAP sparse model to a renderable .ply." },
+      { label: "Hybrid rendering with ray tracing", state: "planned" },
       { label: "Temporal reconstruction", state: "planned" },
+      { label: "Dynamic 4D reconstruction", state: "planned" },
+      { label: "Synthetic dataset rendering", state: "planned", detail: "Labelled renders from captured scenes for robotics and autonomous driving." },
     ]}
   />
 </div>
-
-The source code is available on GitHub:
-[radiance4d](https://github.com/ginzburg-dev/radiance4d).
 
 ## Related earlier work
 
 Radiance4D is a separate project from the
 [C++/OpenGL visualisation engine](/projects/opengl-visualisation-engine/) I
-built in 2012, which remains its own completed project.
+built in 2012.

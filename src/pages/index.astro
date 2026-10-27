@@ -5,8 +5,11 @@ import { Image } from "astro:assets";
 import { site } from "../data/site";
 import gdResults from "../assets/projects/gd-denoising-results-grid.jpg";
 import gndLion from "../assets/projects/gnd-noise-to-clean.jpg";
-import r4dCover from "../assets/projects/r4d-cover.jpg";
+import r4dTrain from "../assets/projects/r4d-train.jpg";
 import ncCover from "../assets/projects/nc-cover.jpg";
+import cvPitchtrack from "../assets/projects/cv-pitchtrack.jpg";
+import cvVisionops from "../assets/projects/cv-visionops.jpg";
+import cvSceneslam from "../assets/projects/cv-sceneslam.jpg";
 import paperFigure from "../assets/research/cvmp-figure-1.png";
 import { paper } from "../data/research";
 
@@ -27,12 +30,13 @@ const featured = [
   },
   {
     entry: byId["radiance4d"],
-    thumb: r4dCover,
+    thumb: r4dTrain,
+    thumbCredit: "Splats: INRIA 3DGS <i>train</i> (Tanks and Temples), rendered in Radiance4D",
     thumbAlt:
-      "A knot-shaped field of coloured Gaussian splats above a ground plane, with rays extending from a virtual camera towards the scene and a light.",
+      "A green Western Pacific 713 locomotive head-on on a sunny rail yard, with other carriages beside it, rendered from Gaussian splats.",
     blurb:
-      "A hybrid real-time rendering and spatiotemporal reconstruction engine in C++20 and Direct3D 12.",
-    meta: "In development · C++20 · Direct3D 12",
+      "A real-time renderer for Gaussian splats and meshes, for virtual production, AR/VR and synthetic training data for robots and self-driving cars. It draws a million splats at 1080p in 9.7 ms.",
+    meta: "In development · C++20 · Direct3D 12 · Vulkan · HLSL",
   },
   {
     entry: byId["ginzburg-neural-denoiser"],
@@ -54,6 +58,43 @@ const featured = [
     meta: "2016–2020 · C++ · Python",
   },
 ];
+
+/** Computer vision work, shown as a compact row under the featured projects. */
+const vision = [
+  {
+    title: "PitchTrack",
+    thumb: cvPitchtrack,
+    thumbAlt:
+      "A night football match with each player in a coloured box labelled with a persistent track ID.",
+    credit: "Footage: Luis Quintero, Pexels",
+    blurb:
+      "Football video analytics: detects and tracks every player in a moving-camera shot and maps them onto the pitch, only where the camera calibration can be trusted.",
+    meta: "Python · YOLO11 · OpenCV",
+    repo: "https://github.com/ginzburg-dev/pitchtrack",
+  },
+  {
+    title: "VisionOps",
+    thumb: cvVisionops,
+    thumbAlt:
+      "A busy waterfront walkway with twenty people detected, each in a labelled box, and a person count banner.",
+    credit: "Footage: Sururi Ballıdağ, Pexels",
+    blurb:
+      "A complete computer vision pipeline for counting people in video: from raw footage and reviewed labels to a trained model running as a web service.",
+    meta: "Python · YOLO11 · ONNX Runtime · FastAPI",
+    repo: "https://github.com/ginzburg-dev/visionops",
+  },
+  {
+    title: "SceneSLAM",
+    thumb: cvSceneslam,
+    thumbAlt:
+      "A coloured point-cloud reconstruction of an office room with the estimated camera trajectory drawn in orange.",
+    credit: "TUM RGB-D dataset, CC BY 4.0",
+    blurb:
+      "Camera tracking and 3D reconstruction from a depth camera, in C++. It tracks all 1,359 frames of a handheld room scan at 30 ms per frame on a laptop CPU.",
+    meta: "C++20 · OpenCV · Rerun",
+    repo: "https://github.com/ginzburg-dev/scene-slam",
+  },
+];
 ---
 
 <BaseLayout title={site.name} description={site.description} path="/">
@@ -61,12 +102,16 @@ const featured = [
     <section class="intro">
       <div class="intro-text">
         <h1>{site.name}</h1>
-        <p class="title">Software Engineer</p>
+        <p class="title">Software Engineer · Graphics, Computer Vision and ML</p>
         <p class="bio">
-          I develop software for rendering, image and video processing, and
-          production workflows. My work includes C++ applications,
-          machine-learning models, GPU inference and backend services, built
-          for studios and shipped into production pipelines.
+          I build software for film and animation studios: rendering, computer
+          vision, and image and video processing, from real-time, low-latency
+          systems to production pipelines. I write C++ applications, train
+          machine-learning models and build optimised GPU inference engines to
+          run them. I also work on 3D reconstruction and tracking. I'm now
+          building a renderer for virtual
+          production and for generating synthetic training data for robots and
+          autonomous vehicles.
         </p>
         <p class="links">
           <span>{site.location}</span>
@@ -121,6 +166,32 @@ const featured = [
         }
       </ul>
       <p class="more"><a href="/projects/">All projects →</a></p>
+    </section>
+
+    <section class="block">
+      <h2>Computer Vision</h2>
+      <ul class="cv-grid">
+        {
+          vision.map((item) => (
+            <li class="cv-card">
+              <a class="thumb" href={item.repo}>
+                <Image
+                  src={item.thumb}
+                  alt={item.thumbAlt}
+                  widths={[320, 640]}
+                  sizes="(min-width: 50rem) 15rem, (min-width: 38rem) 30vw, 100vw"
+                  quality={86}
+                />
+              </a>
+              <p class="credit">{item.credit}</p>
+              <h3><a href={item.repo}>{item.title}</a></h3>
+              <p class="cv-blurb">{item.blurb}</p>
+              <p class="entry-meta">{item.meta}</p>
+              <p class="entry-links"><a href={item.repo}>Code</a></p>
+            </li>
+          ))
+        }
+      </ul>
     </section>
 
     <section class="block">
@@ -288,6 +359,44 @@ const featured = [
 
     .thumb-col {
       max-width: 20rem;
+    }
+  }
+
+  /* computer vision: three compact cards --------------------------------- */
+
+  .cv-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .cv-card h3 {
+    margin-top: var(--space-3);
+    font-size: var(--text-base);
+    font-weight: 620;
+  }
+
+  .cv-card h3 a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .cv-card h3 a:hover {
+    color: var(--accent);
+  }
+
+  .cv-blurb {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 38rem) {
+    .cv-grid {
+      grid-template-columns: 1fr;
     }
   }
 
