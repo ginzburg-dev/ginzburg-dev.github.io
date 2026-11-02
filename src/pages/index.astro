@@ -6,7 +6,7 @@ import { site } from "../data/site";
 import gdResults from "../assets/projects/gd-denoising-results-grid.jpg";
 import gndLion from "../assets/projects/gnd-noise-to-clean.jpg";
 import r4dTrain from "../assets/projects/r4d-train.jpg";
-import ncCover from "../assets/projects/nc-cover.jpg";
+import ncSmartMask from "../assets/projects/nc-smart-mask.jpg";
 import cvPitchtrack from "../assets/projects/cv-pitchtrack.jpg";
 import cvVisionops from "../assets/projects/cv-visionops.jpg";
 import cvSceneslam from "../assets/projects/cv-sceneslam.jpg";
@@ -20,10 +20,11 @@ const byId = Object.fromEntries(projects.map((p) => [p.id, p]));
 const featured = [
   {
     entry: byId["neural-composer"],
-    thumb: ncCover,
-    thumbCredit: "Strawberry capture by Dany Bittel, CC BY 4.0",
+    thumb: ncSmartMask,
+    thumbCredit:
+      "<i>Tears of Steel</i> (2012), Blender Foundation / Blender Institute, CC BY 3.0",
     thumbAlt:
-      "Neural Composer's viewer showing a rendered Gaussian splat strawberry on a checkerboard, above a node graph with ReadGeo, TransformGeo, Scene, Camera and ScanlineRender nodes.",
+      "Neural Composer with a Tears of Steel plate in the viewer: the actor on the left is covered by a red SAM 2.1 mask, with the Smart Roto prompt dialog on the right.",
     blurb:
       "Node-based compositing software with machine learning built into the graph: SAM roto, ViTMatte, diffusion, ComfyUI and Gaussian splats next to keying, cleanup and tracking.",
     meta: "In development · Python · Qt · OpenGL · PyTorch",
