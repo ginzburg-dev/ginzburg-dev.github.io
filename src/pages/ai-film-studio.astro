@@ -17,22 +17,22 @@ const stack = [
 ];
 
 const pipeline = [
-  ["Script", "Written and revised with an AI model, then turned into a list of shots."],
-  ["Storyboard", "Every shot gets its action, camera, length and a finished frame."],
-  ["Characters", "Each character, place and prop is approved once and used in every shot."],
-  ["3D", "Every location is built in 3D, with a camera for each shot."],
-  ["Video", "The approved frame is animated on rented GPUs or through a video API. Price shown first, every version kept."],
-  ["Sound", "Voices, music and effects, each on its own track."],
-  ["Edit", "All shots cut together and exported as a film."],
+  ["Script", "Written and revised with an LLM, then broken down into shots."],
+  ["Storyboard", "Action, camera, duration and a final frame per shot."],
+  ["Characters", "Approved once, referenced in every shot."],
+  ["3D", "Every location built as a set, with a camera per shot."],
+  ["Video", "Image-to-video on cloud GPUs or video APIs. Cost shown up front, every take versioned."],
+  ["Sound", "Voices, score and effects on separate tracks."],
+  ["Edit", "Assembly, conform and export."],
 ];
 
 const agentFlow = [
-  ["Task", "You ask in plain words. The assistant writes down what to do and how to tell it is finished."],
-  ["Check", "Every change is checked against the task. Touching another shot is refused."],
-  ["Tools", "115 tools, the same actions a person has in the app."],
-  ["Limits", "A cap on attempts and on money. If it goes round in circles, it stops and asks."],
-  ["Second look", "A second AI model reviews the finished work and lists what is missing."],
-  ["You decide", "Only a person approves a picture or a shot. Every change can be undone."],
+  ["Task", "Each request becomes a written task with a clear finish line."],
+  ["Check", "Every change is checked against the task."],
+  ["Tools", "115 tools covering the full pipeline."],
+  ["Limits", "Caps on retries and spend. Stuck loops are stopped."],
+  ["Review", "A second model checks the result."],
+  ["Sign-off", "The artist approves every frame and shot."],
 ];
 
 // Agent bench: same task, same model, first run against the run after the changes to the assistant's tools and checks.
@@ -64,7 +64,7 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
 
 <BaseLayout
   title="AI Film Studio"
-  description="An app for making animated films with AI: script, storyboard, characters, 3D locations, video, sound and editing in one place, with an AI assistant that can do the same work."
+  description="A complete AI film studio, from script to final cut, with an agent harness over MCP and 3D reconstruction from Gaussian splats."
   path="/ai-film-studio/"
 >
   <article class="ts">
@@ -72,13 +72,16 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
       <p class="eyebrow">Own project</p>
       <h1>AI Film Studio</h1>
       <p class="lede">
-        An app I built for making animated films with AI: script, storyboard, characters, 3D locations, video,
-        sound and editing in one place.
+        A complete AI film studio, from script to final cut. The first episode of an animated series was made
+        entirely in it.
       </p>
       <p class="lede">
-        Agentic workflow over MCP: AI agents run the whole pipeline with the artist's own tools. They learn
-        from the artists' work, keep every character consistent and get camera angles and layouts right.
-        Built on my set extension research: a location rebuilt in 3D and shot from new angles.
+        An agent harness over MCP that makes even small open models reliable on real production tasks, at a
+        fraction of the token cost.
+      </p>
+      <p class="lede">
+        A complete 3D scene reconstruction system: each location is trained into a 3D scene from a few frames
+        and shot from any new angle, consistent across the cut.
       </p>
     </header>
 
@@ -94,7 +97,7 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
 
       <dl class="facts">
         <div><dt>App</dt><dd>Turbo Sandwich</dd></div>
-        <div><dt>Role</dt><dd>Author, agent harness engineering</dd></div>
+        <div><dt>Role</dt><dd>Creator and lead engineer</dd></div>
         <div><dt>Years</dt><dd>2026 – present</dd></div>
         <div><dt>Status</dt><dd>In daily use</dd></div>
         <div><dt>First film</dt><dd>“Wilson's Little World”, episode 1</dd></div>
@@ -104,67 +107,58 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
 
     <section class="wrap section">
       <div class="copy">
-        <h2>From a 3D layout to a finished shot</h2>
+        <h2>3D previs to final shot</h2>
         <p>
-          I block the camera move in 3D with simple figures. A video model draws the real shot from it, with the
-          approved characters and location.
+          The camera move is set up in 3D with simple stand-ins. A video model then renders the real shot from it, with the approved characters and set.
         </p>
       </div>
       <figure class="pairs">
         <div class="pair">
           <div class="clip">
-            <span class="tag">3D layout</span>
+            <span class="tag">3D previs</span>
             <video src="/figures/turbo-sandwich/orbit-3d.mp4" poster="/figures/turbo-sandwich/orbit-3d.jpg"
               autoplay muted loop playsinline preload="metadata" aria-label="A simple 3D layout: the camera goes half way round two figures standing on a forest path."></video>
           </div>
           <div class="clip">
-            <span class="tag">Finished shot</span>
+            <span class="tag">Final shot</span>
             <video src="/figures/turbo-sandwich/orbit-take.mp4" poster="/figures/turbo-sandwich/orbit-take.jpg"
               autoplay muted loop playsinline preload="metadata" aria-label="The same move drawn by MiniMax H3: the camera goes round the kitten and the rabbit and ends on the river behind them."></video>
           </div>
         </div>
         <div class="pair">
           <div class="clip">
-            <span class="tag">3D layout</span>
+            <span class="tag">3D previs</span>
             <video src="/figures/turbo-sandwich/walk-3d.mp4" poster="/figures/turbo-sandwich/walk-3d.jpg"
               autoplay muted loop playsinline preload="metadata" aria-label="A simple 3D layout: two figures walk along a path between trees, the camera following behind."></video>
           </div>
           <div class="clip">
-            <span class="tag">Finished shot</span>
+            <span class="tag">Final shot</span>
             <video src="/figures/turbo-sandwich/walk-take.mp4" poster="/figures/turbo-sandwich/walk-take.jpg"
               autoplay muted loop playsinline preload="metadata" aria-label="The same move drawn by MiniMax H3: the kitten and the rabbit walk along a forest path beside a river."></video>
           </div>
         </div>
-        <figcaption>Left: the 3D layout. Right: the shot MiniMax H3 drew from it.</figcaption>
+        <figcaption>Left: 3D previs. Right: final shot, MiniMax H3.</figcaption>
       </figure>
     </section>
 
     <section class="wrap section">
       <div class="copy">
-        <h2>Editing</h2>
+        <h2>Editorial</h2>
         <p>
-          An editor made for AI shots. Swap a clip for another version of the shot without moving its neighbours,
-          start it where the movement starts, lay one clip over another with a painted mask. Dialogue, music and
-          effects sit on their own tracks. The film exports as a video or as an edit list for Premiere and
-          DaVinci Resolve.
+          A video editor built for AI footage: swap takes, layer shots with masks, add voices, music and effects, export to Premiere or DaVinci Resolve.
         </p>
       </div>
       <Figure
         src={cutShot}
         alt="The editor with episode 1: video versions on the left, the player with Plop the frog in the middle, and a timeline with 100 clips over tracks for dialogue, music, background sound and effects."
-        caption="The edit of episode 1: 100 clips, with dialogue, music, background sound and effects."
+        caption="Episode 1 timeline: 100 clips with dialogue, music, ambience and effects."
         full="/figures/turbo-sandwich/ts-sequence.jpg"
       />
     </section>
 
     <section class="wrap section">
       <div class="copy">
-        <h2>Why one app</h2>
-        <p>
-          AI video tools make single clips. A film needs the same characters in every shot, places that hold
-          together when the camera turns, and cuts that work. Here every shot knows its line in the script, its
-          approved frame, its video versions and its place in the edit.
-        </p>
+        <h2>One pipeline</h2>
       </div>
 
       <ol class="pipeline" aria-label="The steps of making an episode">
@@ -181,75 +175,64 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
     <section class="wrap section">
       <div class="copy">
         <h2>Storyboard</h2>
-        <p>
-          The whole scene on one screen. A character facing the wrong way or two shots that are too alike get
-          fixed in the still picture, before any video is paid for.
-        </p>
       </div>
       <Figure
         src={boardShot}
         alt="The storyboard: twelve finished frames of episode 1 in a grid, each with its shot number, length, approval and a line of action."
-        caption="Episode 1 on the storyboard: 113 shots, each frame approved before it is animated."
+        caption="Episode 1: 113 shots, each frame approved before animation."
         full="/figures/turbo-sandwich/ts-storyboard.jpg"
       />
     </section>
 
     <section class="wrap section">
       <div class="copy">
-        <h2>Characters that stay the same</h2>
-        <p>
-          Each character, place and prop is approved once. That picture goes into every new frame, with a lineup
-          that keeps their heights right.
-        </p>
+        <h2>Character consistency</h2>
       </div>
       <Gallery
         items={[
           { src: libraryShot, alt: "The library of the series: the characters, two lineups and the location sketches." },
           { src: characterShot, alt: "Wilson the kitten in the library, with his 13 versions, the approved look and the pictures used to draw it." },
         ]}
-        caption="The characters and locations of the series, and one character with every version."
+        caption="Series library and a character sheet with every version."
       />
     </section>
 
     <section class="wrap section">
       <div class="copy">
-        <h2>Locations in 3D</h2>
+        <h2>Set reconstruction</h2>
         <p>
-          Each location is rebuilt in 3D from its pictures, on my own GPU. Every shot gets a camera there: its
-          render sets the layout of a new frame, the approved pictures set the look.
+          Each location is rebuilt in 3D as Gaussian splats from its frames (MapAnything, gsplat). World Labs Atlas fills in what no frame shows. Every shot gets its own camera on that set.
         </p>
       </div>
       <Figure
         src={setShot}
         alt="The 3D view through one of the shot cameras: a forest river bank with mossy stones, ferns and a sunlit path between the trees, with the camera's settings on the right."
-        caption="The Gold River location in 3D, seen through one of the shot cameras."
+        caption="The Gold River set, seen through a shot camera."
         full="/figures/turbo-sandwich/ts-3d-set.jpg"
       />
     </section>
 
     <section class="wrap section">
       <div class="copy">
-        <h2>Fixing a frame by hand</h2>
+        <h2>Paint and cleanup</h2>
         <p>
-          A paint editor for small fixes before animation: layers, brushes, clone, masks and AI fill. Neural
-          Painter redraws the picture live while you paint, on my own GPU.
+          Paint, mask and add new elements to any frame, like in Photoshop, without leaving the app. Neural
+          Painter redraws the frame live as you paint.
         </p>
       </div>
       <Figure
         src={painterShot}
         alt="The paint editor with a frame of Wilson the kitten holding a magnifying glass by the river: tools and layers on the left, the Neural Painter panel on the right."
-        caption="The paint editor on a frame from the series."
+        caption="Paint editor on a frame from the series."
         full="/figures/turbo-sandwich/ts-painter.jpg"
       />
     </section>
 
     <section class="wrap section">
       <div class="copy">
-        <h2>The AI assistant</h2>
+        <h2>Agent harness</h2>
         <p>
-          The assistant does the same work a person does: sets up a 3D location, draws a frame, makes a video,
-          looks at it and tries again. Claude Code, Codex and Cursor use the same tools through MCP. Rules
-          written as code keep it on task:
+          AI agents build sets, draw frames, make video, check the result and try again. They also work from Claude Code, Codex and Cursor through MCP. Rules in code keep them on task:
         </p>
       </div>
 
@@ -259,26 +242,23 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
             <li><h3>{name}</h3><p>{text}</p></li>
           ))}
         </ol>
-        <figcaption>The model does the work. The app holds the task, checks each step and leaves the decisions to a person.</figcaption>
+        <figcaption>The model does the work. The harness keeps it on task.</figcaption>
       </figure>
     </section>
 
     <section class="wrap section">
       <div class="copy">
-        <h2>Which AI models can do the job</h2>
+        <h2>Model benchmark</h2>
         <p>
-          I tested 18 models on a copy of the real project with my everyday tasks: move a clip, place a line of
-          dialogue, pick the usable videos, find the worst cuts, edit a 3D location. 627 runs in all. Where every
-          model failed the same way, I fixed the app, not the prompt. Trimming old tool results and caching made
-          each step up to 15 times cheaper.
+          18 AI models, 627 test runs on real production tasks. The harness raised scores across the board and cut token cost per step up to 15 times.
         </p>
       </div>
 
       <figure class="chart-fig">
         <div class="chart" role="img" aria-label="Score of each model on the same tasks: the first run, and the run after the changes to the app. Over 45 repeated runs on 12 models, the average went from 44% to 73%.">
           <div class="legend" aria-hidden="true">
-            <span><i class="dot before"></i>First run</span>
-            <span><i class="dot after"></i>After the changes to the app</span>
+            <span><i class="dot before"></i>Baseline</span>
+            <span><i class="dot after"></i>With the harness</span>
           </div>
           <ul class="rows">
             {bench.map((b) => (
@@ -296,7 +276,7 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
           <div class="axis" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
         </div>
         <figcaption>
-          Same model, same tasks, before and after. On average 44% → 73%; the weakest models gained the most.
+          Same model, same tasks. Average score 44% → 73%, with the largest gains on the smallest models.
         </figcaption>
       </figure>
 
@@ -318,44 +298,40 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
           </tbody>
         </table>
         <figcaption>
-          Cheap and open models come within a few points of the best one at a third to a sixth of the price.
+          Open and low-cost models land within a few points of the leader at a third to a sixth of the cost.
         </figcaption>
       </figure>
     </section>
 
     <section class="wrap section">
       <div class="copy">
-        <h2>How it is built</h2>
+        <h2>Architecture</h2>
       </div>
-      <div class="arch" role="img" aria-label="How it is built: the app in the browser, the AI assistant, a command line and outside AI apps all talk to one server, which runs the queue and the budget and sends work to my own GPU, to rented GPUs and to AI services.">
+      <div class="arch" role="img" aria-label="Architecture: web app, agents, CLI and MCP clients talk to one server, which runs the job queue and budget and dispatches work to a local GPU, cloud GPUs and AI services.">
         <div class="tier">
-          <span class="tier-name">Who uses it</span>
+          <span class="tier-name">Clients</span>
           <div class="boxes">
-            <span>The app in the browser<small>Next.js, React, Three.js</small></span>
-            <span>The AI assistant<small>runs on the server</small></span>
-            <span>Command line</span>
+            <span>Web app<small>Next.js, React, Three.js</small></span>
+            <span>Agents<small>server-side</small></span>
+            <span>CLI</span>
             <span>Claude Code, Codex, Cursor<small>through MCP</small></span>
           </div>
         </div>
         <div class="tier">
           <span class="tier-name">Server</span>
           <div class="boxes">
-            <span class="wide">Python, FastAPI, SQLite<small>about 270 API endpoints, one queue for all jobs, the spending limit, a database per project</small></span>
+            <span class="wide">Python, FastAPI, SQLite<small>270 endpoints, job queue, budget control</small></span>
           </div>
         </div>
         <div class="tier">
-          <span class="tier-name">Where it runs</span>
+          <span class="tier-name">Compute</span>
           <div class="boxes">
-            <span>My own GPU<small>3D rebuilding, Neural Painter, object masks, voices</small></span>
-            <span>Rented GPUs on RunPod<small>video models in ComfyUI</small></span>
+            <span>Local GPU<small>3D reconstruction, Neural Painter, segmentation</small></span>
+            <span>Cloud GPUs<small>video models in ComfyUI on RunPod</small></span>
             <span>AI services<small>GPT Image, Kling, Seedance, Hailuo, ElevenLabs</small></span>
           </div>
         </div>
       </div>
-      <ul class="notes">
-        <li>Account keys stay on the server. The browser and the rented machines never see them.</li>
-        <li>The app's docs are the assistant's knowledge: it reads them fresh for every question.</li>
-      </ul>
     </section>
   </article>
 </BaseLayout>
