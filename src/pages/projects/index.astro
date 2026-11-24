@@ -4,6 +4,21 @@ import PageLayout from "../../layouts/PageLayout.astro";
 import ProjectCard from "../../components/ProjectCard.astro";
 import StatusBadge from "../../components/StatusBadge.astro";
 import { secondaryProjects } from "../../data/secondary";
+import tsThumb from "../../assets/projects/ts-thumb.jpg";
+import ncThumb from "../../assets/projects/nc-smart-mask.jpg";
+import r4dThumb from "../../assets/projects/r4d-train.jpg";
+import gndThumb from "../../assets/projects/gnd-noise-to-clean.jpg";
+import gdThumb from "../../assets/projects/gd-denoising-results-grid.jpg";
+import dmxThumb from "../../assets/projects/dmx-room-comparison.jpg";
+
+/** Card pictures, the same as on the home page, with their credits. */
+const thumbs: Record<string, { src: ImageMetadata; alt: string; credit?: string }> = {
+  "neural-composer": { src: ncThumb, alt: "Neural Composer with a SAM 2.1 roto mask over an actor in the viewer.", credit: "<i>Tears of Steel</i> (2012), Blender Foundation / Blender Institute, CC BY 3.0" },
+  radiance4d: { src: r4dThumb, alt: "A locomotive on a rail yard rendered from Gaussian splats.", credit: "Splats: INRIA 3DGS <i>train</i> (Tanks and Temples), rendered in Radiance4D" },
+  "ginzburg-neural-denoiser": { src: gndThumb, alt: "A furred animal head, noisy render on the left, denoised on the right.", credit: "Image by Joanna Kobierska" },
+  "ginzburg-denoiser": { src: gdThumb, alt: "Before-and-after denoising comparisons of material, fur and hair." },
+  "denoise-machine-x": { src: dmxThumb, alt: "A room render before and after denoising." },
+};
 
 const projects = (await getCollection("projects")).sort(
   (a, b) => a.data.order - b.data.order,
@@ -42,6 +57,8 @@ const platform = secondaryProjects.filter((p) => p.group === "platform");
           status="production"
           stack={["TypeScript", "Next.js", "Three.js", "Python", "FastAPI", "ComfyUI", "MCP"]}
           href="/ai-film-studio/"
+          thumb={tsThumb}
+          thumbAlt="The app's editor with a frame of Wilson the kitten leaning over a river, above a timeline."
         />
       </div>
     </section>
@@ -60,6 +77,9 @@ const platform = secondaryProjects.filter((p) => p.group === "platform");
                 stack={entry.data.stack}
                 href={`/projects/${entry.id}/`}
                 repo={entry.data.repo}
+                thumb={thumbs[entry.id]?.src}
+                thumbAlt={thumbs[entry.id]?.alt}
+                credit={thumbs[entry.id]?.credit}
               />
             ))}
           </div>

@@ -7,6 +7,12 @@ export interface Talk {
 
 export const talks: Talk[] = [
   {
+    title: "Pre-filtered Frame-Difference Features for Temporal Monte Carlo Denoising",
+    venue: "Paper talk, CVMP 2026, European Conference on Visual Media Production, London (upcoming)",
+    year: 2026,
+    project: "/research/",
+  },
+  {
     title: "Guided Temporal Kernel Prediction for Denoising Image Sequences",
     venue: "Internal engineering talk, Flawless AI",
     year: 2026,
