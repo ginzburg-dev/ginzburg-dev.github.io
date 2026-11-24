@@ -10,6 +10,7 @@ import ncSmartMask from "../assets/projects/nc-smart-mask.jpg";
 import cvPitchtrack from "../assets/projects/cv-pitchtrack.jpg";
 import cvVisionops from "../assets/projects/cv-visionops.jpg";
 import cvSceneslam from "../assets/projects/cv-sceneslam.jpg";
+import tsThumb from "../assets/projects/ts-thumb.jpg";
 import paperFigure from "../assets/research/cvmp-figure-1.png";
 import { paper } from "../data/research";
 
@@ -17,7 +18,7 @@ const projects = await getCollection("projects");
 const byId = Object.fromEntries(projects.map((p) => [p.id, p]));
 
 /** Featured projects, in the order they should be read. */
-const featured = [
+const featuredProjects = [
   {
     entry: byId["neural-composer"],
     thumb: ncSmartMask,
@@ -58,6 +59,29 @@ const featured = [
       "Deterministic spatiotemporal denoising for path-traced animation, deployed in production as standalone software, a Nuke plug-in and a C++/Python API.",
     meta: "2016–2020 · C++ · Python",
   },
+];
+
+const featured = [
+  {
+    href: "/ai-film-studio/",
+    title: "AI Film Studio",
+    thumb: tsThumb,
+    thumbCredit: "The editor with episode 1 of “Wilson's Little World”",
+    thumbAlt:
+      "The app's editor: Wilson the kitten leans over the river in the player, above a timeline of video, dialogue and music tracks.",
+    blurb:
+      "An app for making animated films with AI: script, storyboard, characters, 3D locations, video, sound and editing in one place, with an AI assistant that does the same work under rules written as code.",
+    meta: "In daily use · TypeScript · Python · Three.js · ComfyUI · MCP",
+    repo: undefined,
+    video: undefined,
+  },
+  ...featuredProjects.map((item) => ({
+    ...item,
+    href: `/projects/${item.entry.id}/`,
+    title: item.entry.data.title,
+    repo: item.entry.data.repo,
+    video: item.entry.data.video,
+  })),
 ];
 
 /** Computer vision work, shown as a compact row under the featured projects. */
@@ -132,7 +156,7 @@ const vision = [
           featured.map((item) => (
             <li class="entry">
               <div class="thumb-col">
-                <a class="thumb" href={`/projects/${item.entry.id}/`}>
+                <a class="thumb" href={item.href}>
                   <Image
                     src={item.thumb}
                     alt={item.thumbAlt}
@@ -145,19 +169,19 @@ const vision = [
               </div>
               <div class="body">
                 <h3>
-                  <a href={`/projects/${item.entry.id}/`}>
-                    {item.entry.data.title}
+                  <a href={item.href}>
+                    {item.title}
                   </a>
                 </h3>
                 <p class="blurb">{item.blurb}</p>
                 <p class="entry-meta">{item.meta}</p>
                 <p class="entry-links">
-                  <a href={`/projects/${item.entry.id}/`}>Details</a>
-                  {item.entry.data.repo && (
-                    <a href={item.entry.data.repo}>Code</a>
+                  <a href={item.href}>Details</a>
+                  {item.repo && (
+                    <a href={item.repo}>Code</a>
                   )}
-                  {item.entry.data.video && (
-                    <a href={item.entry.data.video}>Video</a>
+                  {item.video && (
+                    <a href={item.video}>Video</a>
                   )}
                 </p>
               </div>

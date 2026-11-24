@@ -32,6 +32,20 @@ const platform = secondaryProjects.filter((p) => p.group === "platform");
   path="/projects/"
 >
   <div class="wrap">
+    <section class="group">
+      <h2>AI Film Making</h2>
+      <div class="cards">
+        <ProjectCard
+          title="AI Film Studio"
+          summary="An app for making animated films with AI: script, storyboard, characters, 3D locations, video, sound and editing in one place, with an AI assistant that does the same work."
+          years="2026–present"
+          status="production"
+          stack={["TypeScript", "Next.js", "Three.js", "Python", "FastAPI", "ComfyUI", "MCP"]}
+          href="/ai-film-studio/"
+        />
+      </div>
+    </section>
+
     {
       grouped.map((group) => (
         <section class="group">

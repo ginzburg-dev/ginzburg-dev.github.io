@@ -17,35 +17,35 @@ const stack = [
 ];
 
 const pipeline = [
-  ["Script", "Written and revised with a chat model, versioned, approved, then published into a shot list."],
-  ["Board", "Every shot with its action, camera, length and cast. Sketches, keyframes and takes, each approved on its own."],
-  ["Library", "Characters, places, props and style. The approved picture is canon and goes into every frame that needs it."],
-  ["3D", "The place built from pictures and video, with cameras and stand-ins per shot. New angles are drawn from it."],
-  ["Takes", "Video from the approved frame on GPU workflows or video APIs, queued, priced and judged."],
-  ["Sound", "Voices from the Library, music by sections, effects, laid on their own tracks."],
-  ["Cut", "A versioned Working Cut: trims to the frame, dissolves, masks, colour at a cut, export."],
+  ["Script", "Written and revised with an AI model, then turned into a list of shots."],
+  ["Storyboard", "Every shot gets its action, camera, length and a finished frame."],
+  ["Characters", "Each character, place and prop is approved once and used in every shot."],
+  ["3D", "Every location is built in 3D, with a camera for each shot."],
+  ["Video", "The approved frame is animated on rented GPUs or through a video API. Price shown first, every version kept."],
+  ["Sound", "Voices, music and effects, each on its own track."],
+  ["Edit", "All shots cut together and exported as a film."],
 ];
 
 const agentFlow = [
-  ["Request", "What you asked, in your words. The agent restates it as a task: goal, targets, kinds of work, when it is done."],
-  ["Gate", "Code checks every changing call against that task. Wrong shot, wrong kind of work or no approved input: refused before it runs."],
-  ["Tools", "115 tools over the same HTTP API the windows use: board, Library, pictures, takes, the cut, 3D, sound, the docs."],
-  ["Controller", "Tries per shot, a budget per task, a stop when it goes round in circles. Paid runs wait in a queue for you."],
-  ["Review", "A second model reads the calls and the answer against “done when” and sends back what is missing."],
-  ["You", "Approvals stay yours. Every change the agent makes in place has an undo, and each Auto task starts from a snapshot."],
+  ["Task", "You ask in plain words. The assistant writes down what to do and how to tell it is finished."],
+  ["Check", "Every change is checked against the task. Touching another shot is refused."],
+  ["Tools", "115 tools, the same actions a person has in the app."],
+  ["Limits", "A cap on attempts and on money. If it goes round in circles, it stops and asks."],
+  ["Second look", "A second AI model reviews the finished work and lists what is missing."],
+  ["You decide", "Only a person approves a picture or a shot. Every change can be undone."],
 ];
 
-// Agent bench. Same task, same model: the first run against the last run after the harness changes.
-// Source: scripts/agent_bench (results.jsonl, 627 runs), tasks with a valid run before and after.
+// Agent bench: same task, same model, first run against the run after the changes to the assistant's tools and checks.
+// Source: scripts/agent_bench (results.jsonl, 627 runs); tasks with a valid run before and after.
 const bench = [
-  { model: "Gemma 4 26B A4B", kind: "open", n: 6, before: 0.13, after: 0.75 },
-  { model: "Gemma 4 31B", kind: "open", n: 8, before: 0.42, after: 0.76 },
-  { model: "gpt-oss-20b", kind: "open", n: 3, before: 0.38, after: 0.61 },
-  { model: "Qwen3.5 9B on the laptop", kind: "local", n: 3, before: 0.29, after: 0.42 },
-  { model: "Qwen3.6 35B A3B", kind: "open", n: 8, before: 0.62, after: 0.73 },
-  { model: "Qwen3.8 27B", kind: "open", n: 4, before: 0.57, after: 0.65 },
-  { model: "Qwen4 Max", kind: "cloud", n: 4, before: 0.65, after: 0.97 },
-  { model: "GPT-6 Luna", kind: "cloud", n: 4, before: 0.62, after: 0.88 },
+  { model: "Gemma 4 26B", n: 6, before: 0.13, after: 0.75 },
+  { model: "Gemma 4 31B", n: 8, before: 0.42, after: 0.76 },
+  { model: "gpt-oss-20b", n: 3, before: 0.38, after: 0.61 },
+  { model: "Qwen3.5 9B, on a laptop", n: 3, before: 0.29, after: 0.42 },
+  { model: "Qwen3.6 35B", n: 8, before: 0.62, after: 0.73 },
+  { model: "Qwen3.8 27B", n: 4, before: 0.57, after: 0.65 },
+  { model: "Qwen4 Max", n: 4, before: 0.65, after: 0.97 },
+  { model: "GPT-6 Luna", n: 4, before: 0.62, after: 0.88 },
 ];
 
 const latest = [
@@ -55,7 +55,7 @@ const latest = [
   { model: "Qwen4 Max", tasks: 14, score: 0.79, usd: 0.326 },
   { model: "GPT-6 Luna", tasks: 32, score: 0.76, usd: 0.081 },
   { model: "Gemma 4 31B (open)", tasks: 30, score: 0.73, usd: 0.082 },
-  { model: "Qwen3.6 35B A3B (open)", tasks: 21, score: 0.73, usd: 0.042 },
+  { model: "Qwen3.6 35B (open)", tasks: 21, score: 0.73, usd: 0.042 },
   { model: "gpt-oss-20b (open)", tasks: 18, score: 0.44, usd: 0.022 },
 ];
 
@@ -64,7 +64,7 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
 
 <BaseLayout
   title="AI Film Studio"
-  description="An AI film studio in one app. Script, storyboard, characters, 3D staging, video takes, sound and the edit, with an agent that works through the same tools as the artist."
+  description="An app for making animated films with AI: script, storyboard, characters, 3D locations, video, sound and editing in one place, with an AI assistant that can do the same work."
   path="/ai-film-studio/"
 >
   <article class="ts">
@@ -72,48 +72,97 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
       <p class="eyebrow">Own project</p>
       <h1>AI Film Studio</h1>
       <p class="lede">
-        One app that takes an animated episode from the script to the finished cut: storyboard, characters,
-        3D staging, video takes, sound and the edit, with an agent that works through the same tools as the
-        artist.
+        An app I built for making animated films with AI: script, storyboard, characters, 3D locations, video,
+        sound and editing in one place. An AI assistant works in it with the same tools.
       </p>
-
-      <dl class="facts">
-        <div><dt>App</dt><dd>Turbo Sandwich</dd></div>
-        <div><dt>Years</dt><dd>2026 – present</dd></div>
-        <div><dt>Role</dt><dd>Sole author</dd></div>
-        <div><dt>Status</dt><dd>In daily production use</dd></div>
-        <div><dt>In use on</dt><dd>“Wilson's Little World”, an animated series</dd></div>
-        <div class="stack-cell"><dt>Stack</dt><dd class="stack">{stack.join(" · ")}</dd></div>
-      </dl>
     </header>
 
     <div class="wrap">
-      <Figure
-        src={cutShot}
-        alt="The Sequence editor with episode 1 of Wilson's Little World: the take browser on the left, the player showing Plop the frog, and a timeline with 100 picture clips over five audio tracks for clip sound, dialogue, music, ambience and effects."
-        caption="The Working Cut of episode 1: 100 clips, 5 min 5 s, with dialogue, music, ambience and effects on their own tracks. Every clip knows the shot, the take and the picture it came from."
-        full="/figures/turbo-sandwich/ts-sequence.jpg"
-      />
+      <figure class="reel">
+        <video src="/figures/turbo-sandwich/reel.mp4" poster="/figures/turbo-sandwich/reel.jpg"
+          autoplay muted loop playsinline preload="auto"
+          aria-label="Shots from episode 1 of Wilson's Little World: a forest river, Plop the frog on his rock, Wilson the kitten, Hollis the rabbit, the two friends crossing the water."></video>
+        <figcaption>
+          Episode 1 of “Wilson's Little World”, an animated series made entirely in the app.
+        </figcaption>
+      </figure>
+
+      <dl class="facts">
+        <div><dt>App</dt><dd>Turbo Sandwich</dd></div>
+        <div><dt>Role</dt><dd>Author, agent harness engineering</dd></div>
+        <div><dt>Years</dt><dd>2026 – present</dd></div>
+        <div><dt>Status</dt><dd>In daily use</dd></div>
+        <div><dt>First film</dt><dd>“Wilson's Little World”, episode 1</dd></div>
+        <div class="stack-cell"><dt>Stack</dt><dd class="stack">{stack.join(" · ")}</dd></div>
+      </dl>
     </div>
 
     <section class="wrap section">
-      <div class="intro">
-        <h2>One app for the whole episode</h2>
+      <div class="copy">
+        <h2>From a 3D layout to a finished shot</h2>
         <p>
-          AI video tools make clips. A film needs more than clips: the same characters in every shot, a place that
-          holds together when the camera turns, cuts that respect screen direction, and a record of what was made
-          from what. The app keeps all of that in one project. A shot carries its script line, its approved
-          frame, its takes and its place in the cut, so a change anywhere can be traced and redone.
+          I block the camera move in 3D with simple figures. A video model draws the real shot from it, with the
+          approved characters and location.
         </p>
+      </div>
+      <figure class="pairs">
+        <div class="pair">
+          <div class="clip">
+            <span class="tag">3D layout</span>
+            <video src="/figures/turbo-sandwich/orbit-3d.mp4" poster="/figures/turbo-sandwich/orbit-3d.jpg"
+              autoplay muted loop playsinline preload="metadata" aria-label="A simple 3D layout: the camera goes half way round two figures standing on a forest path."></video>
+          </div>
+          <div class="clip">
+            <span class="tag">Finished shot</span>
+            <video src="/figures/turbo-sandwich/orbit-take.mp4" poster="/figures/turbo-sandwich/orbit-take.jpg"
+              autoplay muted loop playsinline preload="metadata" aria-label="The same move drawn by MiniMax H3: the camera goes round the kitten and the rabbit and ends on the river behind them."></video>
+          </div>
+        </div>
+        <div class="pair">
+          <div class="clip">
+            <span class="tag">3D layout</span>
+            <video src="/figures/turbo-sandwich/walk-3d.mp4" poster="/figures/turbo-sandwich/walk-3d.jpg"
+              autoplay muted loop playsinline preload="metadata" aria-label="A simple 3D layout: two figures walk along a path between trees, the camera following behind."></video>
+          </div>
+          <div class="clip">
+            <span class="tag">Finished shot</span>
+            <video src="/figures/turbo-sandwich/walk-take.mp4" poster="/figures/turbo-sandwich/walk-take.jpg"
+              autoplay muted loop playsinline preload="metadata" aria-label="The same move drawn by MiniMax H3: the kitten and the rabbit walk along a forest path beside a river."></video>
+          </div>
+        </div>
+        <figcaption>Left: the 3D layout. Right: the shot MiniMax H3 drew from it.</figcaption>
+      </figure>
+    </section>
+
+    <section class="wrap section">
+      <div class="copy">
+        <h2>Editing</h2>
         <p>
-          It runs on your own keys. Pictures come from GPT Image, video from GPU workflows on RunPod or a local
-          ComfyUI (LTX-2.5, MiniMax H3, Wan 2.2) and from video APIs (Kling, Seedance, Hailuo), sound from
-          ElevenLabs. The app finds GPU machines, starts and prepares them, and releases them inside the spending
-          limit you set.
+          An editor made for AI shots. Swap a clip for another version of the shot without moving its neighbours,
+          start it where the movement starts, lay one clip over another with a painted mask. Dialogue, music and
+          effects sit on their own tracks. The film exports as a video or as an edit list for Premiere and
+          DaVinci Resolve.
+        </p>
+      </div>
+      <Figure
+        src={cutShot}
+        alt="The editor with episode 1: video versions on the left, the player with Plop the frog in the middle, and a timeline with 100 clips over tracks for dialogue, music, background sound and effects."
+        caption="The edit of episode 1: 100 clips, with dialogue, music, background sound and effects."
+        full="/figures/turbo-sandwich/ts-sequence.jpg"
+      />
+    </section>
+
+    <section class="wrap section">
+      <div class="copy">
+        <h2>Why one app</h2>
+        <p>
+          AI video tools make single clips. A film needs the same characters in every shot, places that hold
+          together when the camera turns, and cuts that work. Here every shot knows its line in the script, its
+          approved frame, its video versions and its place in the edit.
         </p>
       </div>
 
-      <ol class="pipeline" aria-label="From script to cut">
+      <ol class="pipeline" aria-label="The steps of making an episode">
         {pipeline.map(([name, text], i) => (
           <li>
             <span class="step">{String(i + 1).padStart(2, "0")}</span>
@@ -125,221 +174,106 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
     </section>
 
     <section class="wrap section">
-      <div class="split">
-        <div class="copy">
-          <h2>Board and storyboard</h2>
-          <p>
-            The published script becomes a shot list. The Board shows each shot with its picture, length, stage
-            and takes; the storyboard view lays the frames out as a wall to read the scene at a glance.
-          </p>
-          <p>
-            A frame is checked against its neighbours before any video is made: screen direction, eyelines, shot
-            size, which paw holds the prop. A defect is fixed in the picture, where it costs cents, not in the take.
-          </p>
-        </div>
+      <div class="copy">
+        <h2>Storyboard</h2>
+        <p>
+          The whole scene on one screen. A character facing the wrong way or two shots that are too alike get
+          fixed in the still picture, before any video is paid for.
+        </p>
       </div>
       <Figure
         src={boardShot}
-        alt="The storyboard view of the Board: twelve keyframes of episode 1 in a grid, each with its shot code, length, approval state and a line of action."
-        caption="Episode 1 on the storyboard wall: 113 shots, each frame approved on its own before animation."
+        alt="The storyboard: twelve finished frames of episode 1 in a grid, each with its shot number, length, approval and a line of action."
+        caption="Episode 1 on the storyboard: 113 shots, each frame approved before it is animated."
         full="/figures/turbo-sandwich/ts-storyboard.jpg"
       />
     </section>
 
     <section class="wrap section">
-      <div class="split">
-        <div class="copy">
-          <h2>Characters stay the same</h2>
-          <p>
-            The Library holds the cast, places, props and style. Each item keeps its versions, and the approved
-            one is canon: every new frame gets it as a reference, together with a lineup for relative heights. Words
-            point to the approved picture instead of describing the character again.
-          </p>
-        </div>
+      <div class="copy">
+        <h2>Characters that stay the same</h2>
+        <p>
+          Each character, place and prop is approved once. That picture goes into every new frame, with a lineup
+          that keeps their heights right.
+        </p>
       </div>
       <Gallery
         items={[
-          { src: libraryShot, alt: "The Asset Library grid: twelve characters, lineups and master shots of Gold River." },
-          { src: characterShot, alt: "Wilson the kitten open in the Library, with his 13 versions, the approved final look and the references used to draw it." },
+          { src: libraryShot, alt: "The library of the series: the characters, two lineups and the location sketches." },
+          { src: characterShot, alt: "Wilson the kitten in the library, with his 13 versions, the approved look and the pictures used to draw it." },
         ]}
-        caption="Left: the cast, lineups and master shots of the series. Right: one character with its versions, the approved look and what it was made from."
+        caption="The characters and locations of the series, and one character with every version."
       />
     </section>
 
     <section class="wrap section">
-      <div class="split">
-        <div class="copy">
-          <h2>Places in 3D</h2>
-          <p>
-            A new camera angle is where AI pictures usually fall apart. So each place is built in 3D. A take or a
-            set of pictures goes through MapAnything on the local GPU, which gives every frame its camera and depth
-            at one scale; the depths are fused into a mesh, and the approved pictures are projected back onto it.
-            The result is a textured set, not a point cloud.
-          </p>
-          <p>
-            Each shot gets a camera and stand-ins for the cast in this set. The render of that camera gives the
-            layout, and the nearest approved picture gives the look; the image model draws the new frame from both.
-          </p>
-        </div>
+      <div class="copy">
+        <h2>Locations in 3D</h2>
+        <p>
+          Each location is rebuilt in 3D from its pictures, on my own GPU. Every shot gets a camera there: its
+          render sets the layout of a new frame, the approved pictures set the look.
+        </p>
       </div>
       <Figure
         src={setShot}
-        alt="The 3D tab looking through the camera river_to_oak: a reconstructed woodland river bank with mossy stones, ferns and a sunlit path between trees, the camera's lens and position on the right."
-        caption="The Gold River set seen through one of its shot cameras. The bank, stones and woods come from the reconstruction, textured with the approved pictures."
+        alt="The 3D view through one of the shot cameras: a forest river bank with mossy stones, ferns and a sunlit path between the trees, with the camera's settings on the right."
+        caption="The Gold River location in 3D, seen through one of the shot cameras."
         full="/figures/turbo-sandwich/ts-3d-set.jpg"
       />
-
-      <figure class="pairs">
-        <div class="pair">
-          <div class="clip">
-            <span class="tag">3D layout</span>
-            <video src="/figures/turbo-sandwich/walk-3d.mp4" poster="/figures/turbo-sandwich/walk-3d.jpg"
-              autoplay muted loop playsinline preload="metadata" aria-label="A rough 3D blockout: two capsule stand-ins walk along a path between tree trunks, the camera following."></video>
-          </div>
-          <div class="clip">
-            <span class="tag">Video model</span>
-            <video src="/figures/turbo-sandwich/walk-take.mp4" poster="/figures/turbo-sandwich/walk-take.jpg"
-              autoplay muted loop playsinline preload="metadata" aria-label="The same move drawn by MiniMax H3: the kitten and the rabbit walk along a forest path beside a river."></video>
-          </div>
-        </div>
-        <div class="pair">
-          <div class="clip">
-            <span class="tag">3D layout</span>
-            <video src="/figures/turbo-sandwich/orbit-3d.mp4" poster="/figures/turbo-sandwich/orbit-3d.jpg"
-              autoplay muted loop playsinline preload="metadata" aria-label="A 3D blockout: the camera orbits 180 degrees around two stand-ins on a clearing."></video>
-          </div>
-          <div class="clip">
-            <span class="tag">Video model</span>
-            <video src="/figures/turbo-sandwich/orbit-take.mp4" poster="/figures/turbo-sandwich/orbit-take.jpg"
-              autoplay muted loop playsinline preload="metadata" aria-label="The same orbit drawn by MiniMax H3: the camera goes round the kitten and the rabbit, who keep their places."></video>
-          </div>
-        </div>
-        <figcaption>
-          A camera move blocked in 3D and the take a video model drew from it (MiniMax H3, guided by the 3D render
-          and the approved pictures). The move, the order of the characters and the side of the place follow the
-          layout, including a 180° orbit.
-        </figcaption>
-      </figure>
     </section>
 
     <section class="wrap section">
-      <div class="split">
-        <div class="copy">
-          <h2>Takes, queue and GPUs</h2>
-          <p>
-            A take starts from the approved frame. The ComfyUI workflows are stored as fixed reference graphs with
-            declared inputs, so a run is patched and checked, never edited by hand. Every run is priced before it
-            starts and joins one queue with the picture and sound jobs.
-          </p>
-          <p>
-            GPU pods form one pool for every project on the machine. A project borrows a warm pod while it has work
-            and hands it back, an agent inside each pod is reached only through an authenticated gateway, and a
-            dead-man switch stops pods the app no longer knows about. API keys never leave the backend.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="wrap section">
-      <div class="split">
-        <div class="copy">
-          <h2>Painter</h2>
-          <p>
-            A layered paint editor inside the app, for the fixes a frame needs before it is animated: move, clone,
-            masks, crop, colour, AI upscale and Generative Fill on a painted area. Redraw and Neural Painter live run
-            a local model on this computer's GPU and redraw the picture as you paint, about one frame a second, from a
-            pencil sketch, over a painting or over a photo.
-          </p>
-        </div>
+      <div class="copy">
+        <h2>Fixing a frame by hand</h2>
+        <p>
+          A paint editor for small fixes before animation: layers, brushes, clone, masks and AI fill. Neural
+          Painter redraws the picture live while you paint, on my own GPU.
+        </p>
       </div>
       <Figure
         src={painterShot}
-        alt="The Painter with a frame of Wilson the kitten holding a magnifying glass by the river: tools and layers on the left, the Redraw panel with Neural Painter live on the right."
-        caption="The Painter on a frame of the series, with the Redraw panel and Neural Painter live on the right."
+        alt="The paint editor with a frame of Wilson the kitten holding a magnifying glass by the river: tools and layers on the left, the Neural Painter panel on the right."
+        caption="The paint editor on a frame from the series."
         full="/figures/turbo-sandwich/ts-painter.jpg"
       />
     </section>
 
     <section class="wrap section">
-      <div class="split">
-        <div class="copy">
-          <h2>The Working Cut</h2>
-          <p>
-            The editor is built for cutting generated takes. Trims are frame-aligned to the take's own frames, and a
-            clip can be swapped for another take of the same shot without moving its neighbours. A clip can be laid
-            over another with a painted mask, matched in colour to its neighbour at the cut, or trimmed to where the
-            motion starts, so a cut never opens on a still first frame.
-          </p>
-          <p>
-            Each saved version is kept. The player reads the next 12 seconds of files ahead and plays across clips
-            and dissolves. The cut exports as an MP4, with upscaled takes, or as FCP7 XML for Premiere and Resolve.
-            A review script renders every cut as a sheet of frames, so screen direction, repeated setups and jumps
-            are checked like an editor would.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="wrap section">
-      <div class="split">
-        <div class="copy">
-          <h2>An agent that works in the app</h2>
-          <p>
-            The in-app assistant is one agent with tools. It does the same work a person does in the windows,
-            through the same requests: it stages a 3D set, draws a frame, starts a take, waits for it, looks at the
-            result and tries again. The same tools are open to Claude Code, Codex and Cursor over an MCP server.
-          </p>
-          <p>
-            A model on its own is not enough to trust with a production. The harness around it decides what it may
-            touch and when it has to stop:
-          </p>
-        </div>
+      <div class="copy">
+        <h2>The AI assistant</h2>
+        <p>
+          The assistant does the same work a person does: sets up a 3D location, draws a frame, makes a video,
+          looks at it and tries again. Claude Code, Codex and Cursor use the same tools through MCP. Rules
+          written as code keep it on task:
+        </p>
       </div>
 
       <figure class="flow-fig">
-        <ol class="flow" aria-label="How the agent harness handles a task">
+        <ol class="flow" aria-label="How the app keeps the assistant on task">
           {agentFlow.map(([name, text]) => (
             <li><h3>{name}</h3><p>{text}</p></li>
           ))}
         </ol>
-        <figcaption>
-          The harness. The model plans and calls tools; code holds the task, checks every change against it and
-          keeps the decisions that matter with the person.
-        </figcaption>
+        <figcaption>The model does the work. The app holds the task, checks each step and leaves the decisions to a person.</figcaption>
       </figure>
     </section>
 
     <section class="wrap section">
-      <div class="split">
-        <div class="copy">
-          <h2>Which model can drive it: a bench on a real series</h2>
-          <p>
-            To find out which models can run a production and what it costs, I built a bench on a copy of the
-            series' real project: 105 shots, 162 takes, a 49-clip cut with sound, 3D sets and reconstructions. The
-            tasks are what I do every day: move a clip by half a second, place a line after another, write a dialogue
-            prompt, judge ten takes, find the worst cuts, remove a tree from a 3D set without touching the woods,
-            redraw a frame from a new angle. Facts are checked by code; taste by one fixed judge model with a written
-            rubric. Paid media and GPUs are off.
-          </p>
-          <p>
-            627 runs over 18 models, from GPT-6 to open models on OpenRouter and Qwen on the laptop. The first runs
-            were expensive for the wrong reason: one 3D task cost $2.09, and 64% of it was the growing history being
-            written to the cache, from 21k to 200k tokens. Trimming old tool results and caching the stable part cut a
-            step on Qwen4 Max from $0.0086 to $0.00055.
-          </p>
-          <p>
-            When every model failed a task the same way, I fixed the tool or the task, not the prompt: composite tools
-            for one flat edit, a shot brief with the exact line and the rules that name the shot, a review pass. Seven
-            tasks were held out and never used for tuning.
-          </p>
-        </div>
+      <div class="copy">
+        <h2>Which AI models can do the job</h2>
+        <p>
+          I tested 18 models on a copy of the real project with my everyday tasks: move a clip, place a line of
+          dialogue, pick the usable videos, find the worst cuts, edit a 3D location. 627 runs in all. Where every
+          model failed the same way, I fixed the app, not the prompt. Trimming old tool results and caching made
+          each step up to 15 times cheaper.
+        </p>
       </div>
 
       <figure class="chart-fig">
-        <div class="chart" role="img" aria-label="Score per model on the same tasks, first run against the run after the harness changes. Across 45 reruns on 12 models the mean rose from 44% to 73%.">
+        <div class="chart" role="img" aria-label="Score of each model on the same tasks: the first run, and the run after the changes to the app. Over 45 repeated runs on 12 models, the average went from 44% to 73%.">
           <div class="legend" aria-hidden="true">
             <span><i class="dot before"></i>First run</span>
-            <span><i class="dot after"></i>After the harness changes</span>
+            <span><i class="dot after"></i>After the changes to the app</span>
           </div>
           <ul class="rows">
             {bench.map((b) => (
@@ -357,16 +291,15 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
           <div class="axis" aria-hidden="true"><span>0%</span><span>50%</span><span>100%</span></div>
         </div>
         <figcaption>
-          Same model, same task: the first run against the last run after the harness changes. Across all 45 reruns
-          on 12 models the mean score rose from 44% to 73%. The weakest models gained the most.
+          Same model, same tasks, before and after. On average 44% → 73%; the weakest models gained the most.
         </figcaption>
       </figure>
 
       <figure class="table-fig">
         <table>
-          <caption>Where the models ended up (last run of each task)</caption>
+          <caption>Final results (latest run of each task)</caption>
           <thead>
-            <tr><th scope="col">Model</th><th scope="col">Tasks</th><th scope="col">Mean score</th><th scope="col">Cost per task</th></tr>
+            <tr><th scope="col">Model</th><th scope="col">Tasks</th><th scope="col">Score</th><th scope="col">Cost per task</th></tr>
           </thead>
           <tbody>
             {latest.map((r) => (
@@ -380,49 +313,43 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
           </tbody>
         </table>
         <figcaption>
-          A cheap cloud model and an open 27B model come within a few points of the strongest model at a third to a
-          sixth of the cost. Judging takes by eye and drawing a reverse angle stay weak for every model; those stay
-          with the artist.
+          Cheap and open models come within a few points of the best one at a third to a sixth of the price.
         </figcaption>
       </figure>
     </section>
 
     <section class="wrap section">
-      <div class="split">
-        <div class="copy">
-          <h2>How it is built</h2>
-        </div>
+      <div class="copy">
+        <h2>How it is built</h2>
       </div>
-      <div class="arch" role="img" aria-label="Architecture: the web console, the CLI, the in-app agent and outside AI apps over MCP all call one FastAPI backend, which runs the scheduler, queue and budgets and talks to local models, the RunPod GPU pool and the media APIs.">
+      <div class="arch" role="img" aria-label="How it is built: the app in the browser, the AI assistant, a command line and outside AI apps all talk to one server, which runs the queue and the budget and sends work to my own GPU, to rented GPUs and to AI services.">
         <div class="tier">
-          <span class="tier-name">Clients</span>
+          <span class="tier-name">Who uses it</span>
           <div class="boxes">
-            <span>Web console<small>Next.js, React, Three.js</small></span>
-            <span>In-app agent<small>runs on the server</small></span>
-            <span>ts CLI</span>
-            <span>Claude, Codex, Cursor<small>over MCP</small></span>
+            <span>The app in the browser<small>Next.js, React, Three.js</small></span>
+            <span>The AI assistant<small>runs on the server</small></span>
+            <span>Command line</span>
+            <span>Claude Code, Codex, Cursor<small>through MCP</small></span>
           </div>
         </div>
         <div class="tier">
-          <span class="tier-name">Backend</span>
+          <span class="tier-name">Server</span>
           <div class="boxes">
-            <span class="wide">FastAPI, about 270 HTTP requests<small>scheduler and worker pool, one queue, budget manager, a SQLite database per project, restart-safe</small></span>
+            <span class="wide">Python, FastAPI, SQLite<small>about 270 API endpoints, one queue for all jobs, the spending limit, a database per project</small></span>
           </div>
         </div>
         <div class="tier">
-          <span class="tier-name">Compute</span>
+          <span class="tier-name">Where it runs</span>
           <div class="boxes">
-            <span>Local GPU<small>ComfyUI, MapAnything, SAM 3, Stable Diffusion, voices</small></span>
-            <span>RunPod pool<small>gateway in each pod, ComfyUI on 127.0.0.1</small></span>
-            <span>Media APIs<small>GPT Image, Kling, Seedance, Hailuo, ElevenLabs</small></span>
+            <span>My own GPU<small>3D rebuilding, Neural Painter, object masks, voices</small></span>
+            <span>Rented GPUs on RunPod<small>video models in ComfyUI</small></span>
+            <span>AI services<small>GPT Image, Kling, Seedance, Hailuo, ElevenLabs</small></span>
           </div>
         </div>
       </div>
       <ul class="notes">
-        <li>The browser talks only to the backend. RunPod, Hugging Face and media keys never reach it or a pod.</li>
-        <li>Video workflows are immutable reference graphs with declared bindings; a run is a verified patch of one.</li>
-        <li>Several copies run on one machine, each with its own port and database; a second seat works over the LAN.</li>
-        <li>The docs are the assistant's knowledge base: it reads them from disk on every question.</li>
+        <li>Account keys stay on the server. The browser and the rented machines never see them.</li>
+        <li>The app's docs are the assistant's knowledge: it reads them fresh for every question.</li>
       </ul>
     </section>
   </article>
@@ -437,6 +364,25 @@ const pct = (v: number) => `${Math.round(v * 100)}%`;
 
   .lede {
     max-width: 62ch;
+  }
+
+  .reel {
+    margin: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .reel video {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg);
+    background: var(--paper-sunken);
+  }
+
+  .wrap > .facts {
+    margin-top: var(--space-6);
   }
 
   .facts {
