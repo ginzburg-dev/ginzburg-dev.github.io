@@ -3,6 +3,7 @@ import ThemeToggle from "./ThemeToggle.astro";
 
 const nav = [
   { href: "/projects/", label: "Projects" },
+  { href: "/ai-film-studio/", label: "AI Film Studio" },
   { href: "/research/", label: "Research" },
   { href: "/talks/", label: "Talks" },
   { href: "/about/", label: "About" },
@@ -73,6 +74,7 @@ const isCurrent = (href: string) => here === href || here.startsWith(href);
   }
 
   nav a {
+    white-space: nowrap;
     font-size: var(--text-sm);
     font-weight: 500;
     color: var(--ink-muted);
@@ -102,7 +104,8 @@ const isCurrent = (href: string) => here === href || here.startsWith(href);
     }
 
     nav ul {
-      gap: var(--space-4);
+      flex-wrap: wrap;
+      gap: var(--space-1) var(--space-4);
     }
   }
 </style>
