@@ -10,6 +10,7 @@ export const site = {
   links: {
     github: "https://github.com/ginzburg-dev",
     linkedin: "https://www.linkedin.com/in/ginzburg-cg",
+    scholar: "https://scholar.google.com/citations?user=64JhKPQAAAAJ&hl=en",
     imdb: "https://www.imdb.com/name/nm17000880/",
     artstation: "https://ginzburg-lighting-td.artstation.com/",
   },

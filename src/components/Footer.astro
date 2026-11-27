@@ -1,4 +1,6 @@
 ---
+import { site } from "../data/site";
+
 const year = new Date().getFullYear();
 ---
 
@@ -8,9 +10,10 @@ const year = new Date().getFullYear();
       <strong>Dmitri Ginzburg</strong> · Software Engineer · London, UK
     </p>
     <ul class="links">
-      <li><a href="https://github.com/ginzburg-dev">GitHub</a></li>
-      <li><a href="https://www.linkedin.com/in/ginzburg-cg">LinkedIn</a></li>
-      <li><a href="mailto:ginzburgdd@gmail.com">Email</a></li>
+      <li><a href={site.links.github}>GitHub</a></li>
+      <li><a href={site.links.linkedin}>LinkedIn</a></li>
+      <li><a href={site.links.scholar}>Google Scholar</a></li>
+      <li><a href={`mailto:${site.email}`}>Email</a></li>
     </ul>
     <p class="fine">
       © {year} Dmitri Ginzburg. Third-party images retain their own licences and
